@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, createContext, useContext } from "react";
-import { CheckCircle2, XCircle } from "lucide-react";
+import React, { useCallback, createContext, useContext, useState } from "react";
 
 interface ToastMessage {
   id: number;
@@ -19,13 +18,41 @@ export const useToast = () => useContext(ToastContext);
 
 let toastIdCounter = 0;
 
+const toastContainerStyle: React.CSSProperties = {
+  position: "fixed",
+  bottom: "90px",
+  left: "50%",
+  transform: "translateX(-50%)",
+  zIndex: 9999,
+  display: "flex",
+  flexDirection: "column",
+  gap: "8px",
+  alignItems: "center",
+  pointerEvents: "none",
+};
+
+const toastBaseStyle: React.CSSProperties = {
+  pointerEvents: "auto",
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  padding: "12px 22px",
+  borderRadius: "14px",
+  fontSize: "14px",
+  fontWeight: 600,
+  color: "#fff",
+  whiteSpace: "nowrap",
+  backdropFilter: "blur(16px)",
+  animation: "fadeSlideUp 0.4s ease-out both",
+  fontFamily: "inherit",
+};
+
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const showToast = useCallback((text: string, type: "success" | "error" = "success") => {
     const id = ++toastIdCounter;
     setToasts((prev) => [...prev.filter((t) => t.id !== id), { id, text, type }]);
-
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 2800);
@@ -34,22 +61,21 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast Container */}
-      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 items-center pointer-events-none">
+      <div style={toastContainerStyle}>
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-center gap-2 px-6 py-3.5 rounded-2xl text-sm font-semibold text-white shadow-xl backdrop-blur-xl animate-toast-in whitespace-nowrap ${
-              toast.type === "error"
-                ? "bg-red-500/90 shadow-red-500/20"
-                : "bg-emerald-500/90 shadow-emerald-500/20"
-            }`}
+            style={{
+              ...toastBaseStyle,
+              background: toast.type === "error"
+                ? "rgba(239, 68, 68, 0.92)"
+                : "rgba(34, 197, 94, 0.92)",
+              boxShadow: toast.type === "error"
+                ? "0 8px 24px rgba(239, 68, 68, 0.3)"
+                : "0 8px 24px rgba(34, 197, 94, 0.3)",
+            }}
           >
-            {toast.type === "error" ? (
-              <XCircle className="w-4 h-4 shrink-0" />
-            ) : (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-            )}
+            <i className={toast.type === "error" ? "fa-solid fa-circle-xmark" : "fa-solid fa-circle-check"}></i>
             {toast.text}
           </div>
         ))}
