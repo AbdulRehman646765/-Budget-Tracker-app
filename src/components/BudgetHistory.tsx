@@ -8,6 +8,7 @@ interface BudgetHistoryProps {
   currency: CurrencySymbol;
   onEdit: (entry: HistoryEntry) => void;
   onDelete: (id: string) => void;
+  hideAmounts?: boolean;
 }
 
 export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
@@ -15,24 +16,30 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
   currency,
   onEdit,
   onDelete,
+  hideAmounts = false,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filtered = history.filter((entry) => {
-    const text = `${entry.date} ${entry.salary} ${entry.grocery} ${entry.vegetables} ${entry.fruits} ${entry.transport} ${entry.mobile}`.toLowerCase();
+    const text =
+      `${entry.date} ${entry.salary} ${entry.grocery} ${entry.vegetables} ${entry.fruits} ${entry.transport} ${entry.mobile}`.toLowerCase();
     return text.includes(searchQuery.toLowerCase());
   });
 
   const exportCSV = () => {
     if (history.length === 0) return;
-    const headers = "Date,Salary,Grocery,Vegetables,Fruits,Transport,Mobile,Expense,Remaining\n";
+    const headers =
+      "Date,Salary,Grocery,Vegetables,Fruits,Transport,Mobile,Expense,Remaining\n";
     const rows = history
-      .map((e) =>
-        `"${e.date}","${e.salary}","${e.grocery}","${e.vegetables}","${e.fruits}","${e.transport}","${e.mobile}","${e.expense}","${e.remaining}"`
+      .map(
+        (e) =>
+          `"${e.date}","${e.salary}","${e.grocery}","${e.vegetables}","${e.fruits}","${e.transport}","${e.mobile}","${e.expense}","${e.remaining}"`,
       )
       .join("\n");
 
-    const blob = new Blob([headers + rows], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([headers + rows], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -47,7 +54,7 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
     const tableRows = history
       .map(
         (e) =>
-          `<tr><td>${e.date}</td><td>${e.salary}</td><td>${e.grocery}</td><td>${e.vegetables}</td><td>${e.fruits}</td><td>${e.transport}</td><td>${e.mobile}</td><td>${e.expense}</td><td>${e.remaining}</td></tr>`
+          `<tr><td>${e.date}</td><td>${e.salary}</td><td>${e.grocery}</td><td>${e.vegetables}</td><td>${e.fruits}</td><td>${e.transport}</td><td>${e.mobile}</td><td>${e.expense}</td><td>${e.remaining}</td></tr>`,
       )
       .join("");
 
@@ -84,9 +91,14 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
   };
 
   return (
-    <section className="glass-card history-section tool-card" id="historySection">
+    <section
+      className="glass-card history-section tool-card"
+      id="historySection"
+    >
       <div className="section-title-row">
-        <h2><i className="fa-solid fa-clock-rotate-left"></i> Budget History</h2>
+        <h2>
+          <i className="fa-solid fa-clock-rotate-left"></i> Budget History
+        </h2>
         <div className="export-btns">
           <button className="icon-btn" onClick={exportCSV} title="Export CSV">
             <i className="fa-solid fa-file-csv"></i>
@@ -106,43 +118,86 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <div className="table-wrapper">
-        <table id="historyTable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Salary</th>
-              <th>Grocery</th>
-              <th>Vegetables</th>
-              <th>Fruits</th>
-              <th>Transport</th>
-              <th>Mobile</th>
-              <th>Expense</th>
-              <th>Remaining</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody">
-            {filtered.map((entry) => (
-              <tr key={entry.id}>
-                <td>{entry.date}</td>
-                <td>{entry.salary}</td>
-                <td>{entry.grocery}</td>
-                <td>{entry.vegetables}</td>
-                <td>{entry.fruits}</td>
-                <td>{entry.transport}</td>
-                <td>{entry.mobile}</td>
-                <td>{entry.expense}</td>
-                <td>{entry.remaining}</td>
-                <td>
-                  <button onClick={() => onEdit(entry)}><i className="fa-solid fa-pen"></i></button>
-                  <button onClick={() => onDelete(entry.id)}><i className="fa-solid fa-trash"></i></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {hideAmounts ? (
+        <div className="chart-locked">
+          <i className="fa-solid fa-lock"></i>
+          <h3>History Locked</h3>
+          <p>Set and unlock your PIN to view your budget history.</p>
+        </div>
+      ) : (
+        <>
+          <div className="search-wrapper">
+            <i className="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search history..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="table-wrapper">
+            <table id="historyTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Salary</th>
+                  <th>Grocery</th>
+                  <th>Vegetables</th>
+                  <th>Fruits</th>
+                  <th>Transport</th>
+                  <th>Mobile</th>
+                  <th>Expense</th>
+                  <th>Remaining</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="historyBody">
+                {filtered.map((entry) => (
+                  <tr key={entry.id}>
+                    <td>{entry.date}</td>
+                    <td>
+                      {currency} {entry.salary.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.grocery.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.vegetables.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.fruits.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.transport.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.mobile.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.expense.toLocaleString()}
+                    </td>
+                    <td>
+                      {currency} {entry.remaining.toLocaleString()}
+                    </td>
+                    <td>
+                      <button onClick={() => onEdit(entry)}>
+                        <i className="fa-solid fa-pen"></i>
+                      </button>
+
+                      <button onClick={() => onDelete(entry.id)}>
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </section>
   );
 };

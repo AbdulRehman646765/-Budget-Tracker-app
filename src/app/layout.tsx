@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Monthly Budget Tracker — Smart Finance Manager",
+  title: "Monthly Budget Tracker",
   description: "Track your monthly budget, expenses, and savings goals with this professional finance manager.",
 };
 

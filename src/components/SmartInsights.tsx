@@ -17,6 +17,7 @@ interface SmartInsightsProps {
   customExpenses: CustomExpense[];
   currency: CurrencySymbol;
   categoriesMap?: Record<string, CategoryInfo>;
+  hideAmounts?: boolean;
 }
 
 interface Insight {
@@ -26,27 +27,46 @@ interface Insight {
 }
 
 export const SmartInsights: React.FC<SmartInsightsProps> = ({
-  salary, grocery, vegetables, fruits, transport, mobile,
-  total, remaining, goal, customExpenses, currency,
+  salary,
+  grocery,
+  vegetables,
+  fruits,
+  transport,
+  mobile,
+  total,
+  remaining,
+  goal,
+  customExpenses,
+  currency,
   categoriesMap = CATEGORIES,
+  hideAmounts = false,
 }) => {
   const insights: Insight[] = [];
 
-  if (salary <= 0 && total <= 0) {
-    return (
-      <section className="glass-card insights-section tool-card" id="insightsSection">
-        <div className="section-title-row">
-          <h2><i className="fa-solid fa-lightbulb"></i> Smart Financial Insights</h2>
+  if (hideAmounts) {
+  return (
+    <section
+      className="glass-card insights-section tool-card"
+      id="insightsSection"
+    >
+      <div className="section-title-row">
+        <h2>
+          <i className="fa-solid fa-lightbulb"></i> Smart Financial Insights
+        </h2>
+      </div>
+
+      <div className="insights-container">
+        <div className="insight-item insight-neutral">
+          <i className="fa-solid fa-lock"></i>
+          <span>
+            Smart Insights are locked. Set and unlock your PIN to view your
+            financial analysis.
+          </span>
         </div>
-        <div className="insights-container" id="insightsContainer">
-          <div className="insight-item insight-neutral">
-            <i className="fa-solid fa-chart-line"></i>
-            <span>Enter income and expenses to generate personal spending insights.</span>
-          </div>
-        </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
+}
 
   if (salary > 0) {
     const savingsRate = Math.round((remaining / salary) * 100);
@@ -54,19 +74,19 @@ export const SmartInsights: React.FC<SmartInsightsProps> = ({
       insights.push({
         type: "positive",
         icon: "fa-circle-check",
-        text: `Awesome job! You are saving <strong>${savingsRate}%</strong> of your monthly income.`
+        text: `Awesome job! You are saving <strong>${savingsRate}%</strong> of your monthly income.`,
       });
     } else if (savingsRate < 0) {
       insights.push({
         type: "danger",
         icon: "fa-circle-exclamation",
-        text: `Critical Alert: Expenses exceed your income by <strong>${currency} ${Math.abs(remaining).toLocaleString()}</strong>.`
+        text: `Critical Alert: Expenses exceed your income by <strong>${currency} ${Math.abs(remaining).toLocaleString()}</strong>.`,
       });
     } else {
       insights.push({
         type: "warning",
         icon: "fa-triangle-exclamation",
-        text: `Your savings rate is only <strong>${savingsRate}%</strong>. Financial experts recommend saving at least 20%.`
+        text: `Your savings rate is only <strong>${savingsRate}%</strong>. Financial experts recommend saving at least 20%.`,
       });
     }
   }
@@ -77,23 +97,27 @@ export const SmartInsights: React.FC<SmartInsightsProps> = ({
       { label: "Vegetables", amount: vegetables },
       { label: "Fruits", amount: fruits },
       { label: "Transport", amount: transport },
-      { label: "Mobile", amount: mobile }
+      { label: "Mobile", amount: mobile },
     ];
 
-    customExpenses.forEach(exp => {
-      const catLabel = categoriesMap[exp.category]?.label || exp.category || "Other";
-      const existing = categoriesMapList.find(c => c.label === catLabel);
+    customExpenses.forEach((exp) => {
+      const catLabel =
+        categoriesMap[exp.category]?.label || exp.category || "Other";
+      const existing = categoriesMapList.find((c) => c.label === catLabel);
       if (existing) existing.amount += exp.amount;
       else categoriesMapList.push({ label: catLabel, amount: exp.amount });
     });
 
-    const highest = categoriesMapList.reduce((prev, curr) => (curr.amount > prev.amount) ? curr : prev, { label: "None", amount: 0 });
+    const highest = categoriesMapList.reduce(
+      (prev, curr) => (curr.amount > prev.amount ? curr : prev),
+      { label: "None", amount: 0 },
+    );
     if (highest.amount > 0) {
       const highPercent = Math.round((highest.amount / total) * 100);
       insights.push({
         type: highPercent > 40 ? "warning" : "neutral",
         icon: "fa-pie-chart",
-        text: `<strong>${highest.label}</strong> is your top expense category, making up <strong>${highPercent}%</strong> of total spending (${currency} ${highest.amount.toLocaleString()}).`
+        text: `<strong>${highest.label}</strong> is your top expense category, making up <strong>${highPercent}%</strong> of total spending (${currency} ${highest.amount.toLocaleString()}).`,
       });
     }
   }
@@ -103,22 +127,27 @@ export const SmartInsights: React.FC<SmartInsightsProps> = ({
       insights.push({
         type: "positive",
         icon: "fa-trophy",
-        text: `Savings goal achieved! You have <strong>${currency} ${(remaining - goal).toLocaleString()}</strong> surplus.`
+        text: `Savings goal achieved! You have <strong>${currency} ${(remaining - goal).toLocaleString()}</strong> surplus.`,
       });
     } else {
       const diff = goal - remaining;
       insights.push({
         type: "neutral",
         icon: "fa-bullseye",
-        text: `Reduce expenses by <strong>${currency} ${diff.toLocaleString()}</strong> to hit your Savings Goal.`
+        text: `Reduce expenses by <strong>${currency} ${diff.toLocaleString()}</strong> to hit your Savings Goal.`,
       });
     }
   }
 
   return (
-    <section className="glass-card insights-section tool-card" id="insightsSection">
+    <section
+      className="glass-card insights-section tool-card"
+      id="insightsSection"
+    >
       <div className="section-title-row">
-        <h2><i className="fa-solid fa-lightbulb"></i> Smart Financial Insights</h2>
+        <h2>
+          <i className="fa-solid fa-lightbulb"></i> Smart Financial Insights
+        </h2>
       </div>
       <div className="insights-container" id="insightsContainer">
         {insights.map((item, idx) => (

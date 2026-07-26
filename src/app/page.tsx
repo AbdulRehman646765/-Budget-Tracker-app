@@ -132,9 +132,14 @@ function MainApp() {
     if (savedCurr) setCurrency(savedCurr);
 
     const pin = localStorage.getItem("appPin") || "";
-    const locked = localStorage.getItem("isAppLocked") === "true";
+
     setAppPin(pin);
-    if (pin && locked) setIsLocked(true);
+
+    // Agar PIN saved hai to app start hote hi lock ho jaye
+    if (pin) {
+      setIsLocked(true);
+      setPinOverlayMode(null);
+    }
 
     const savedCustom = localStorage.getItem("customExpenses");
     if (savedCustom) setCustomExpenses(JSON.parse(savedCustom));
@@ -164,6 +169,19 @@ function MainApp() {
     setGoal(Number(localStorage.getItem("goal")) || 0);
   }, []);
 
+  // Check if PIN is set before allowing actions
+  const checkPinAccess = () => {
+    if (!appPin) {
+      showToast(
+        "🔒 Please set a 4-digit PIN first to use this feature.",
+        "error",
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   // Theme Toggle
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -178,6 +196,7 @@ function MainApp() {
 
   // Currency Change
   const changeCurrency = (symbol: CurrencySymbol) => {
+    if (!checkPinAccess()) return;
     setCurrency(symbol);
     localStorage.setItem("selectedCurrency", symbol);
     showToast(`Currency changed to ${symbol}`);
@@ -222,6 +241,8 @@ function MainApp() {
   const percent =
     salary > 0 ? Math.min((totalExpenses / salary) * 100, 100) : 0;
 
+  const hideAmounts = appPin === "";
+
   // Check alert threshold
   useEffect(() => {
     if (
@@ -240,10 +261,12 @@ function MainApp() {
 
   // Handlers for Form Actions
   const handleRefresh = () => {
+    if (!checkPinAccess()) return;
     showToast("Values recalculated!");
   };
 
   const handleSave = () => {
+    if (!checkPinAccess()) return;
     const date = new Date().toLocaleDateString();
     const newEntry: HistoryEntry = {
       id: Date.now().toString(),
@@ -285,6 +308,7 @@ function MainApp() {
   };
 
   const handleReset = () => {
+    if (!checkPinAccess()) return;
     if (!confirm("Reset current budget? This will clear all input fields."))
       return;
     setSalary(0);
@@ -311,6 +335,7 @@ function MainApp() {
     amount: number,
     category: CategoryKey,
   ) => {
+    if (!checkPinAccess()) return;
     const newExp: CustomExpense = {
       id: Date.now().toString(),
       name,
@@ -325,6 +350,7 @@ function MainApp() {
   };
 
   const handleDeleteCustomExpense = (id: string) => {
+    if (!checkPinAccess()) return;
     const updated = customExpenses.filter((e) => e.id !== id);
     setCustomExpenses(updated);
     localStorage.setItem("customExpenses", JSON.stringify(updated));
@@ -332,6 +358,7 @@ function MainApp() {
   };
 
   const handleClearAllCustomExpenses = () => {
+    if (!checkPinAccess()) return;
     if (!confirm("Clear all custom expenses?")) return;
     setCustomExpenses([]);
     localStorage.setItem("customExpenses", JSON.stringify([]));
@@ -346,6 +373,7 @@ function MainApp() {
   const categoriesMap = buildCategoriesMap(userCustomCategories);
 
   const handleAddCategory = (newCategory: CategoryConfig) => {
+    if (!checkPinAccess()) return;
     const updated = [...userCustomCategories, newCategory];
     setUserCustomCategories(updated);
     localStorage.setItem("userCustomCategories", JSON.stringify(updated));
@@ -353,6 +381,7 @@ function MainApp() {
   };
 
   const handleDeleteCategory = (key: string) => {
+    if (!checkPinAccess()) return;
     const updated = userCustomCategories.filter((c) => c.key !== key);
     setUserCustomCategories(updated);
     localStorage.setItem("userCustomCategories", JSON.stringify(updated));
@@ -365,6 +394,7 @@ function MainApp() {
     amount: number,
     dueDate: number,
   ) => {
+    if (!checkPinAccess()) return;
     const newSub: Subscription = {
       id: Date.now().toString(),
       name,
@@ -380,6 +410,7 @@ function MainApp() {
   };
 
   const handleToggleSubStatus = (id: string) => {
+    if (!checkPinAccess()) return;
     const updated = subscriptions.map((s) =>
       s.id === id
         ? {
@@ -396,6 +427,7 @@ function MainApp() {
   };
 
   const handleDeleteSubscription = (id: string) => {
+    if (!checkPinAccess()) return;
     const updated = subscriptions.filter((s) => s.id !== id);
     setSubscriptions(updated);
     localStorage.setItem("subscriptions", JSON.stringify(updated));
@@ -404,6 +436,7 @@ function MainApp() {
 
   // Budget History Actions
   const handleEditHistoryRow = (entry: HistoryEntry) => {
+    if (!checkPinAccess()) return;
     setSalary(entry.salary);
     setGrocery(entry.grocery);
     setVegetables(entry.vegetables);
@@ -414,6 +447,7 @@ function MainApp() {
   };
 
   const handleDeleteHistoryRow = (id: string) => {
+    if (!checkPinAccess()) return;
     const updated = history.filter((h) => h.id !== id);
     setHistory(updated);
     localStorage.setItem("budgetHistory", JSON.stringify(updated));
@@ -421,6 +455,7 @@ function MainApp() {
   };
 
   const handleClearMonthlyData = () => {
+    if (!checkPinAccess()) return;
     if (!confirm("Clear monthly comparison history?")) return;
     setMonthlyHistory([]);
     localStorage.removeItem("monthlyHistory");
@@ -432,21 +467,23 @@ function MainApp() {
     if (inputPin === appPin) {
       setIsLocked(false);
       setPinOverlayMode(null);
-      localStorage.setItem("isAppLocked", "false");
+
       showToast("App Unlocked!");
       return true;
-    } else {
-      showToast("Incorrect PIN!", "error");
-      return false;
     }
+
+    showToast("Incorrect PIN!", "error");
+    return false;
   };
 
   const handleSetPin = (newPin: string) => {
     setAppPin(newPin);
-    setIsLocked(true);
-    setPinOverlayMode(null);
+
     localStorage.setItem("appPin", newPin);
-    localStorage.setItem("isAppLocked", "true");
+
+    setIsLocked(false);
+    setPinOverlayMode(null);
+
     showToast("PIN Lock Enabled!");
   };
 
@@ -455,14 +492,16 @@ function MainApp() {
       setAppPin("");
       setIsLocked(false);
       setPinOverlayMode(null);
+
       localStorage.removeItem("appPin");
-      localStorage.setItem("isAppLocked", "false");
+
       showToast("PIN Lock Disabled");
+
       return true;
-    } else {
-      showToast("Incorrect PIN!", "error");
-      return false;
     }
+
+    showToast("Incorrect PIN!", "error");
+    return false;
   };
 
   const handlePinToggleClick = () => {
@@ -519,6 +558,21 @@ function MainApp() {
     setVisibleTools((prev) => ({ ...prev, [tool]: !prev[tool] }));
   };
 
+  useEffect(() => {
+    const lockApp = () => {
+      if (appPin) {
+        setIsLocked(true);
+        setPinOverlayMode(null);
+      }
+    };
+
+    window.addEventListener("beforeunload", lockApp);
+
+    return () => {
+      window.removeEventListener("beforeunload", lockApp);
+    };
+  }, [appPin]);
+
   return (
     <>
       {/* Background Floating Orbs */}
@@ -574,6 +628,7 @@ function MainApp() {
           expenses={totalExpenses}
           remaining={remaining}
           currency={currency}
+          hideAmounts={!appPin || isLocked}
         />
 
         {/* Usage Progress */}
@@ -606,6 +661,7 @@ function MainApp() {
           totalExpenses={totalExpenses}
           remaining={remaining}
           currency={currency}
+          hideAmounts={!appPin || isLocked}
         />
 
         {/* Savings Goal */}
@@ -618,6 +674,7 @@ function MainApp() {
           categoriesMap={categoriesMap}
           onDelete={handleDeleteCustomExpense}
           onClearAll={handleClearAllCustomExpenses}
+          hideAmounts={!appPin || isLocked}
         />
 
         {/* Tools Toolbar */}
@@ -638,6 +695,7 @@ function MainApp() {
             customExpenses={customExpenses}
             currency={currency}
             categoriesMap={categoriesMap}
+            hideAmounts={!appPin || isLocked}
           />
         )}
 
@@ -656,6 +714,7 @@ function MainApp() {
             customExpenses={customExpenses}
             currency={currency}
             categoriesMap={categoriesMap}
+            hideAmounts={!appPin || isLocked}
           />
         )}
 
@@ -667,12 +726,16 @@ function MainApp() {
             onToggleStatus={handleToggleSubStatus}
             onDelete={handleDeleteSubscription}
             onAddClick={() => setShowAddSubModal(true)}
+            hideAmounts={!appPin || isLocked}
           />
         )}
 
         {/* Tool 4: Daily Spending Calendar */}
         {visibleTools.calendar && (
-          <SpendingCalendar customExpenses={customExpenses} />
+          <SpendingCalendar
+            customExpenses={customExpenses}
+            hideAmounts={!appPin || isLocked}
+          />
         )}
 
         {/* Tool 5: Monthly Comparison */}
@@ -681,6 +744,7 @@ function MainApp() {
             monthlyHistory={monthlyHistory}
             currency={currency}
             onClear={handleClearMonthlyData}
+            hideAmounts={!appPin || isLocked}
           />
         )}
 
@@ -691,6 +755,7 @@ function MainApp() {
             currency={currency}
             onEdit={handleEditHistoryRow}
             onDelete={handleDeleteHistoryRow}
+            hideAmounts={!appPin || isLocked}
           />
         )}
 

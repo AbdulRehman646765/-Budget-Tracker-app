@@ -10,6 +10,7 @@ interface CustomExpensesProps {
   categoriesMap?: Record<string, CategoryInfo>;
   onDelete: (id: string) => void;
   onClearAll: () => void;
+  hideAmounts?: boolean;
 }
 
 export const CustomExpenses: React.FC<CustomExpensesProps> = ({
@@ -18,34 +19,71 @@ export const CustomExpenses: React.FC<CustomExpensesProps> = ({
   categoriesMap = CATEGORIES,
   onDelete,
   onClearAll,
+  hideAmounts = false,
 }) => {
   if (expenses.length === 0) return null;
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   return (
-    <section className="glass-card custom-expenses-section" id="customExpensesSection">
+    <section
+      className="glass-card custom-expenses-section"
+      id="customExpensesSection"
+    >
       <div className="section-title-row">
-        <h2><i className="fa-solid fa-list-check"></i> Custom Expenses</h2>
+        <h2>
+          <i className="fa-solid fa-list-check"></i> Custom Expenses
+        </h2>
         <span className="badge" id="customTotalBadge">
-          <span className="curr-symbol">{currency}</span> {total.toLocaleString()}
+          {hideAmounts ? (
+            "*****"
+          ) : (
+            <>
+              <span className="curr-symbol">{currency}</span>{" "}
+              {total.toLocaleString()}
+            </>
+          )}
         </span>
       </div>
       <div id="customExpensesList" className="custom-expenses-list">
         {expenses.map((exp) => {
-          const cat = categoriesMap[exp.category] || CATEGORIES.general || { label: exp.category, color: '#64748b', iconName: 'fa-solid fa-tag' };
-          const iconClass = cat.iconName ? (cat.iconName.includes('fa-') ? cat.iconName : `fa-solid ${cat.iconName}`) : 'fa-solid fa-tag';
+          const cat = categoriesMap[exp.category] ||
+            CATEGORIES.general || {
+              label: exp.category,
+              color: "#64748b",
+              iconName: "fa-solid fa-tag",
+            };
+          const iconClass = cat.iconName
+            ? cat.iconName.includes("fa-")
+              ? cat.iconName
+              : `fa-solid ${cat.iconName}`
+            : "fa-solid fa-tag";
           return (
             <div className="custom-expense-item" key={exp.id}>
               <div className="custom-expense-info">
-                <span className="custom-expense-badge" style={{ background: cat.color }}>
+                <span
+                  className="custom-expense-badge"
+                  style={{ background: cat.color }}
+                >
                   <i className={iconClass}></i> {cat.label}
                 </span>
                 <span className="custom-expense-name">{exp.name}</span>
               </div>
               <div className="custom-expense-right">
-                <span className="custom-expense-amount">{currency} {exp.amount.toLocaleString()}</span>
-                <button className="custom-expense-delete" onClick={() => onDelete(exp.id)} title="Delete">
+                <span className="custom-expense-amount">
+                  {hideAmounts ? (
+                    "*****"
+                  ) : (
+                    <>
+                      {currency} {exp.amount.toLocaleString()}
+                    </>
+                  )}
+                </span>
+                <button
+                  className="custom-expense-delete"
+                  onClick={() => onDelete(exp.id)}
+                  title="Delete"
+                >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               </div>
@@ -53,7 +91,11 @@ export const CustomExpenses: React.FC<CustomExpensesProps> = ({
           );
         })}
       </div>
-      <button className="btn btn-danger" onClick={onClearAll} style={{ marginTop: "14px" }}>
+      <button
+        className="btn btn-danger"
+        onClick={onClearAll}
+        style={{ marginTop: "14px" }}
+      >
         <i className="fa-solid fa-trash-can"></i> Clear All
       </button>
     </section>

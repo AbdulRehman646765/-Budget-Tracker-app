@@ -13,6 +13,7 @@ interface DonutChartProps {
   customExpenses: CustomExpense[];
   currency: CurrencySymbol;
   categoriesMap?: Record<string, CategoryInfo>;
+  hideAmounts?: boolean;
 }
 
 export const DonutChart: React.FC<DonutChartProps> = ({
@@ -24,6 +25,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   customExpenses,
   currency,
   categoriesMap = CATEGORIES,
+  hideAmounts = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -36,7 +38,12 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   ];
 
   customExpenses.forEach((exp) => {
-    const catObj = categoriesMap[exp.category] || CATEGORIES.general || { label: exp.category, color: '#64748b', iconName: '' };
+    const catObj = categoriesMap[exp.category] ||
+      CATEGORIES.general || {
+        label: exp.category,
+        color: "#64748b",
+        iconName: "",
+      };
     const existing = categoriesMapList.find((c) => c.label === catObj.label);
     if (existing) {
       existing.amount += exp.amount;
@@ -95,27 +102,52 @@ export const DonutChart: React.FC<DonutChartProps> = ({
 
   return (
     <section className="glass-card chart-section tool-card" id="chartSection">
-      <h2><i className="fa-solid fa-chart-pie"></i> Expense Breakdown</h2>
+      <h2>
+        <i className="fa-solid fa-chart-pie"></i> Expense Breakdown
+      </h2>
       <div className="chart-container">
-        <canvas ref={canvasRef} id="donutChart" width="260" height="260"></canvas>
-        <div className="chart-center-label" id="chartCenterLabel">
-          <span className="chart-center-amount" id="chartCenterAmount">
-            <span className="curr-symbol">{currency}</span> {totalAmount.toLocaleString()}
-          </span>
-          <span className="chart-center-text">Total</span>
-        </div>
+        {hideAmounts ? (
+          <div className="chart-locked">
+            <i className="fa-solid fa-lock"></i> <h3>Chart Locked</h3>
+            <p>Set and unlock your PIN to view analytics.</p>
+          </div>
+        ) : (
+          <>
+            <canvas
+              ref={canvasRef}
+              id="donutChart"
+              width="260"
+              height="260"
+            ></canvas>
+
+            <div className="chart-center-label" id="chartCenterLabel">
+              <span className="chart-center-amount" id="chartCenterAmount">
+                <span className="curr-symbol">{currency}</span>{" "}
+                {totalAmount.toLocaleString()}
+              </span>
+              <span className="chart-center-text">Total</span>
+            </div>
+          </>
+        )}
       </div>
       <div className="chart-legend" id="chartLegend">
         {totalAmount === 0 ? (
-          <p className="comparison-empty" style={{ gridColumn: "span 2" }}>No expenses added yet.</p>
+          <p className="comparison-empty" style={{ gridColumn: "span 2" }}>
+            No expenses added yet.
+          </p>
         ) : (
           activeItems.map((item, idx) => {
             const percentage = Math.round((item.amount / totalAmount) * 100);
             return (
               <div className="legend-item" key={idx}>
-                <span className="legend-color" style={{ background: item.color }}></span>
+                <span
+                  className="legend-color"
+                  style={{ background: item.color }}
+                ></span>
                 <span className="legend-label">{item.label}</span>
-                <span className="legend-val">{percentage}%</span>
+                <span className="legend-val">
+                  {hideAmounts ? "*****" : `${percentage}%`}
+                </span>
               </div>
             );
           })

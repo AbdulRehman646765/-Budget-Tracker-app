@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
 
 /* ========================================
    DESIGN SYSTEM — Monthly Budget Tracker
@@ -319,11 +319,22 @@ body {
 
 /* PIN shake animation */
 @keyframes pin-shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-10px); }
-  40%       { transform: translateX(10px); }
-  60%       { transform: translateX(-8px); }
-  80%       { transform: translateX(8px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-10px);
+  }
+  40% {
+    transform: translateX(10px);
+  }
+  60% {
+    transform: translateX(-8px);
+  }
+  80% {
+    transform: translateX(8px);
+  }
 }
 
 .pin-shake {
@@ -343,7 +354,9 @@ body {
   height: 8px;
   border-radius: 50%;
   background: var(--border-input);
-  transition: background 0.3s, transform 0.3s;
+  transition:
+    background 0.3s,
+    transform 0.3s;
 }
 
 .pin-step-dot.active {
@@ -362,8 +375,13 @@ body {
 }
 
 @keyframes lockout-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-  50%       { box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.2); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.2);
+  }
 }
 
 .pin-icon-danger {
@@ -432,7 +450,9 @@ body {
   border-radius: 50%;
   border: 2px solid #ef4444;
   background: transparent;
-  transition: background 0.3s, transform 0.3s;
+  transition:
+    background 0.3s,
+    transform 0.3s;
 }
 
 .attempt-dot.used {
@@ -1417,6 +1437,32 @@ input:checked + .toggle-slider:before {
   justify-content: center;
 }
 
+.chart-locked,
+.history-locked {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+.chart-locked i,
+.history-locked i {
+  font-size: 42px;
+  color: #6366f1;
+}
+
+.chart-locked h3,
+.history-locked h3 {
+  margin: 0;
+}
+
+.chart-locked p,
+.history-locked p {
+  color: var(--text-secondary);
+}
 .chart-center-label {
   position: absolute;
   display: flex;
