@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CurrencySymbol, CustomExpense } from "@/types/budget";
+import { CategoryInfo, CurrencySymbol, CustomExpense } from "@/types/budget";
 import { CATEGORIES } from "@/lib/categories";
 
 interface SmartInsightsProps {
@@ -16,6 +16,7 @@ interface SmartInsightsProps {
   goal: number;
   customExpenses: CustomExpense[];
   currency: CurrencySymbol;
+  categoriesMap?: Record<string, CategoryInfo>;
 }
 
 interface Insight {
@@ -27,6 +28,7 @@ interface Insight {
 export const SmartInsights: React.FC<SmartInsightsProps> = ({
   salary, grocery, vegetables, fruits, transport, mobile,
   total, remaining, goal, customExpenses, currency,
+  categoriesMap = CATEGORIES,
 }) => {
   const insights: Insight[] = [];
 
@@ -70,7 +72,7 @@ export const SmartInsights: React.FC<SmartInsightsProps> = ({
   }
 
   if (total > 0) {
-    const categoriesMap = [
+    const categoriesMapList = [
       { label: "Grocery", amount: grocery },
       { label: "Vegetables", amount: vegetables },
       { label: "Fruits", amount: fruits },
@@ -79,13 +81,13 @@ export const SmartInsights: React.FC<SmartInsightsProps> = ({
     ];
 
     customExpenses.forEach(exp => {
-      const catLabel = CATEGORIES[exp.category]?.label || "Other";
-      const existing = categoriesMap.find(c => c.label === catLabel);
+      const catLabel = categoriesMap[exp.category]?.label || exp.category || "Other";
+      const existing = categoriesMapList.find(c => c.label === catLabel);
       if (existing) existing.amount += exp.amount;
-      else categoriesMap.push({ label: catLabel, amount: exp.amount });
+      else categoriesMapList.push({ label: catLabel, amount: exp.amount });
     });
 
-    const highest = categoriesMap.reduce((prev, curr) => (curr.amount > prev.amount) ? curr : prev, { label: "None", amount: 0 });
+    const highest = categoriesMapList.reduce((prev, curr) => (curr.amount > prev.amount) ? curr : prev, { label: "None", amount: 0 });
     if (highest.amount > 0) {
       const highPercent = Math.round((highest.amount / total) * 100);
       insights.push({

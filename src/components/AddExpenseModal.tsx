@@ -1,31 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
-import { CategoryKey } from "@/types/budget";
+import { CategoryConfig, CategoryKey } from "@/types/budget";
+import { DEFAULT_CATEGORIES } from "@/lib/categories";
 
 interface AddExpenseModalProps {
   show: boolean;
   currency: string;
+  categories?: CategoryConfig[];
   onClose: () => void;
   onAdd: (name: string, amount: number, category: CategoryKey) => void;
+  onOpenCategoryManager?: () => void;
 }
-
-const categoryOptions: { key: CategoryKey; label: string; icon: string }[] = [
-  { key: "general", label: "General", icon: "fa-solid fa-tag" },
-  { key: "food", label: "Food", icon: "fa-solid fa-utensils" },
-  { key: "bills", label: "Bills", icon: "fa-solid fa-file-invoice-dollar" },
-  { key: "health", label: "Health", icon: "fa-solid fa-heart-pulse" },
-  { key: "shopping", label: "Shopping", icon: "fa-solid fa-bag-shopping" },
-  { key: "education", label: "Education", icon: "fa-solid fa-graduation-cap" },
-  { key: "entertainment", label: "Entertainment", icon: "fa-solid fa-film" },
-  { key: "other", label: "Other", icon: "fa-solid fa-ellipsis" },
-];
 
 export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
   show,
   currency,
+  categories = DEFAULT_CATEGORIES,
   onClose,
   onAdd,
+  onOpenCategoryManager,
 }) => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -76,16 +70,24 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
           />
         </div>
         <div className="input-group">
-          <label>Category</label>
+          <div className="cat-picker-header">
+            <label>Category</label>
+            {onOpenCategoryManager && (
+              <button type="button" className="btn-link" onClick={onOpenCategoryManager}>
+                <i className="fa-solid fa-gear"></i> Manage Categories
+              </button>
+            )}
+          </div>
           <div className="category-picker" id="categoryPicker">
-            {categoryOptions.map((opt) => (
+            {categories.map((opt) => (
               <button
                 key={opt.key}
+                type="button"
                 className={`cat-tag ${category === opt.key ? "active" : ""}`}
-                data-cat={opt.key}
+                style={category === opt.key ? { background: opt.color, borderColor: opt.color } : {}}
                 onClick={() => setCategory(opt.key)}
               >
-                <i className={opt.icon}></i> {opt.label}
+                <i className={opt.iconName}></i> {opt.label}
               </button>
             ))}
           </div>

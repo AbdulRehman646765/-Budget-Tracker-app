@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { CurrencySymbol, CustomExpense } from "@/types/budget";
+import { CategoryInfo, CurrencySymbol, CustomExpense } from "@/types/budget";
 import { CATEGORIES } from "@/lib/categories";
 
 interface DonutChartProps {
@@ -12,6 +12,7 @@ interface DonutChartProps {
   mobile: number;
   customExpenses: CustomExpense[];
   currency: CurrencySymbol;
+  categoriesMap?: Record<string, CategoryInfo>;
 }
 
 export const DonutChart: React.FC<DonutChartProps> = ({
@@ -22,10 +23,11 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   mobile,
   customExpenses,
   currency,
+  categoriesMap = CATEGORIES,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const categoriesMap = [
+  const categoriesMapList = [
     { label: "Grocery", amount: grocery, color: "#38bdf8" },
     { label: "Vegetables", amount: vegetables, color: "#22c55e" },
     { label: "Fruits", amount: fruits, color: "#f59e0b" },
@@ -34,12 +36,12 @@ export const DonutChart: React.FC<DonutChartProps> = ({
   ];
 
   customExpenses.forEach((exp) => {
-    const catObj = CATEGORIES[exp.category] || CATEGORIES.general;
-    const existing = categoriesMap.find((c) => c.label === catObj.label);
+    const catObj = categoriesMap[exp.category] || CATEGORIES.general || { label: exp.category, color: '#64748b', iconName: '' };
+    const existing = categoriesMapList.find((c) => c.label === catObj.label);
     if (existing) {
       existing.amount += exp.amount;
     } else {
-      categoriesMap.push({
+      categoriesMapList.push({
         label: catObj.label,
         amount: exp.amount,
         color: catObj.color,
@@ -47,7 +49,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
     }
   });
 
-  const activeItems = categoriesMap.filter((c) => c.amount > 0);
+  const activeItems = categoriesMapList.filter((c) => c.amount > 0);
   const totalAmount = activeItems.reduce((sum, c) => sum + c.amount, 0);
 
   useEffect(() => {

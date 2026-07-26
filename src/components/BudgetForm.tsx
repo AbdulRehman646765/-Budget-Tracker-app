@@ -51,12 +51,12 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
       <div className="form-grid">
         <div className="input-group">
           <label htmlFor="salary">
-            <i className="fa-solid fa-money-bill-wave"></i> Salary (<span className="curr-symbol">{currency}</span>)
+            <i className="fa-solid fa-money-bill-wave"></i> Salary 
           </label>
           <input
             type="number"
             id="salary"
-            placeholder="e.g. 35000"
+            placeholder="e.g. 50000"
             value={salary || ""}
             onChange={(e) => onSalaryChange(Number(e.target.value))}
           />
@@ -68,7 +68,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
           <input
             type="number"
             id="grocery"
-            value={grocery || 0}
+            value={grocery || ""}
+            placeholder="e.g. 7000"
             onChange={(e) => onGroceryChange(Number(e.target.value))}
           />
         </div>
@@ -79,7 +80,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
           <input
             type="number"
             id="vegetables"
-            value={vegetables || 0}
+            value={vegetables || ""}
+            placeholder="e.g. 2000"
             onChange={(e) => onVegetablesChange(Number(e.target.value))}
           />
         </div>
@@ -90,7 +92,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
           <input
             type="number"
             id="fruits"
-            value={fruits || 0}
+            value={fruits || ""}
+            placeholder="e.g. 3500"
             onChange={(e) => onFruitsChange(Number(e.target.value))}
           />
         </div>
@@ -101,7 +104,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
           <input
             type="number"
             id="transport"
-            value={transport || 0}
+            value={transport || ""}
+            placeholder="e.g. 4000"
             onChange={(e) => onTransportChange(Number(e.target.value))}
           />
         </div>
@@ -112,7 +116,8 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
           <input
             type="number"
             id="mobile"
-            value={mobile || 0}
+            value={mobile || ""}
+            placeholder="e.g. 1200"
             onChange={(e) => onMobileChange(Number(e.target.value))}
           />
         </div>
@@ -120,7 +125,7 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
 
       <div className="input-group savings-goal-group">
         <label htmlFor="goal">
-          <i className="fa-solid fa-bullseye"></i> Savings Goal (<span className="curr-symbol">{currency}</span>)
+          <i className="fa-solid fa-bullseye"></i> Savings Goal
         </label>
         <input
           type="number"

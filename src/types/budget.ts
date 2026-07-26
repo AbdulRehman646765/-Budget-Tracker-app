@@ -1,17 +1,17 @@
-export type CategoryKey = 
-  | 'general' 
-  | 'food' 
-  | 'bills' 
-  | 'health' 
-  | 'shopping' 
-  | 'education' 
-  | 'entertainment' 
-  | 'other';
+export type CategoryKey = string;
 
 export interface CategoryInfo {
   label: string;
   color: string;
   iconName: string;
+}
+
+export interface CategoryConfig {
+  key: string;
+  label: string;
+  color: string;
+  iconName: string;
+  isCustom?: boolean;
 }
 
 export interface CustomExpense {

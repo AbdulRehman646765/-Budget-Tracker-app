@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { CurrencySymbol, CustomExpense } from "@/types/budget";
+import { CategoryInfo, CurrencySymbol, CustomExpense } from "@/types/budget";
 import { CATEGORIES } from "@/lib/categories";
 
 interface CustomExpensesProps {
   expenses: CustomExpense[];
   currency: CurrencySymbol;
+  categoriesMap?: Record<string, CategoryInfo>;
   onDelete: (id: string) => void;
   onClearAll: () => void;
 }
@@ -14,6 +15,7 @@ interface CustomExpensesProps {
 export const CustomExpenses: React.FC<CustomExpensesProps> = ({
   expenses,
   currency,
+  categoriesMap = CATEGORIES,
   onDelete,
   onClearAll,
 }) => {
@@ -31,12 +33,13 @@ export const CustomExpenses: React.FC<CustomExpensesProps> = ({
       </div>
       <div id="customExpensesList" className="custom-expenses-list">
         {expenses.map((exp) => {
-          const cat = CATEGORIES[exp.category] || CATEGORIES.general;
+          const cat = categoriesMap[exp.category] || CATEGORIES.general || { label: exp.category, color: '#64748b', iconName: 'fa-solid fa-tag' };
+          const iconClass = cat.iconName ? (cat.iconName.includes('fa-') ? cat.iconName : `fa-solid ${cat.iconName}`) : 'fa-solid fa-tag';
           return (
             <div className="custom-expense-item" key={exp.id}>
               <div className="custom-expense-info">
                 <span className="custom-expense-badge" style={{ background: cat.color }}>
-                  <i className={`fa-solid ${cat.iconName || 'fa-tag'}`}></i> {cat.label}
+                  <i className={iconClass}></i> {cat.label}
                 </span>
                 <span className="custom-expense-name">{exp.name}</span>
               </div>
