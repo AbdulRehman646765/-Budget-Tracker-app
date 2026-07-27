@@ -203,3 +203,10 @@ Charts aur History show ho jaye.
 * Har affected component ko update karo.
 * Jahan zarurat ho complete updated code provide karo.
 * Final implementation aisi ho ke app pehle jaisi hi lage, sirf naye security features add ho jayein.
+
+
+header main PKR dropdown ko convert karn as a extra tool drop down jis main aik calculate chota sa ,
+and app sy related settings, 
+or PKR dropdown ko b usi ky ander shift karna 
+yeh jo main ny uper bola yeh tab karna jab responcsive ho like user mbl yan tab main ho tu 
+otherwies jesy hai asy hi rahi or calucuale and settiogs sections ka btn sath add ho jye 

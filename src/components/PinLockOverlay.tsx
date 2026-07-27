@@ -11,14 +11,14 @@ import React, { useState, useEffect, useRef } from "react";
 interface PinLockOverlayProps {
   show: boolean;
   mode: "unlock" | "setup" | "disable";
-  onUnlock: (pin: string) => boolean;       // unlock mode
-  onSetPin?: (pin: string) => void;         // setup mode
-  onDisablePin?: (pin: string) => boolean;  // disable mode
-  onCancel?: () => void;                    // cancel setup/disable
+  onUnlock: (pin: string) => boolean; // unlock mode
+  onSetPin?: (pin: string) => void; // setup mode
+  onDisablePin?: (pin: string) => boolean; // disable mode
+  onCancel?: () => void; // cancel setup/disable
 }
 
-const MAX_ATTEMPTS = 3;       // غلط tries کی حد
-const LOCKOUT_SECONDS = 30;   // lockout duration
+const MAX_ATTEMPTS = 3; // غلط tries کی حد
+const LOCKOUT_SECONDS = 30; // lockout duration
 
 export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
   show,
@@ -73,8 +73,6 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
     };
   }, [lockedOut]);
 
-  if (!show) return null;
-
   // ---- Helpers ----
   const triggerShake = (msg: string) => {
     setShake(true);
@@ -97,7 +95,7 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
     } else {
       const remaining = MAX_ATTEMPTS - next;
       triggerShake(
-        `Incorrect PIN. ${remaining} attempt${remaining === 1 ? "" : "s"} remaining.`
+        `Incorrect PIN. ${remaining} attempt${remaining === 1 ? "" : "s"} remaining.`,
       );
     }
   };
@@ -159,43 +157,91 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
     }
   };
 
+  // Keyboard Support
+  useEffect(() => {
+    if (!show || lockedOut) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Number keys
+      if (/^[0-9]$/.test(e.key)) {
+        pressPin(e.key);
+        return;
+      }
+
+      // Numpad numbers
+      if (e.code.startsWith("Numpad")) {
+        const num = e.code.replace("Numpad", "");
+        if (/^[0-9]$/.test(num)) {
+          pressPin(num);
+          return;
+        }
+      }
+
+      // Backspace/Delete
+      if (e.key === "Backspace" || e.key === "Delete") {
+        clearLast();
+        return;
+      }
+
+      // Escape (only setup/disable)
+      if (
+        e.key === "Escape" &&
+        (mode === "setup" || mode === "disable") &&
+        onCancel
+      ) {
+        onCancel();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [show, lockedOut, pin, confirmPin, step, mode, onCancel]);
+
+  if (!show) return null;
+
   // ---- Dynamic UI labels ----
   const currentDots = step === "confirm" ? confirmPin : pin;
 
   const title = lockedOut
     ? "Too Many Attempts"
     : mode === "unlock"
-    ? "App Locked"
-    : mode === "setup"
-    ? step === "enter"
-      ? "Set New PIN"
-      : "Confirm PIN"
-    : "Disable PIN Lock";
+      ? "App Locked"
+      : mode === "setup"
+        ? step === "enter"
+          ? "Set New PIN"
+          : "Confirm PIN"
+        : "Disable PIN Lock";
 
   const subtitle = lockedOut
     ? `Try again in ${lockoutRemaining}s`
     : mode === "unlock"
-    ? "Enter your PIN to continue"
-    : mode === "setup"
-    ? step === "enter"
-      ? "Enter a new 4-digit PIN"
-      : "Re-enter your PIN to confirm"
-    : "Enter your current PIN to disable lock";
+      ? "Enter your PIN to continue"
+      : mode === "setup"
+        ? step === "enter"
+          ? "Enter a new 4-digit PIN"
+          : "Re-enter your PIN to confirm"
+        : "Enter your current PIN to disable lock";
 
   const iconClass = lockedOut
     ? "fa-solid fa-ban"
     : mode === "unlock"
-    ? "fa-solid fa-lock"
-    : mode === "setup"
-    ? "fa-solid fa-lock-open"
-    : "fa-solid fa-unlock-keyhole";
+      ? "fa-solid fa-lock"
+      : mode === "setup"
+        ? "fa-solid fa-lock-open"
+        : "fa-solid fa-unlock-keyhole";
 
   // Attempt indicators (only for unlock & disable)
-  const showAttemptDots = (mode === "unlock" || mode === "disable") && !lockedOut;
+  const showAttemptDots =
+    (mode === "unlock" || mode === "disable") && !lockedOut;
 
   return (
     <div className={`pin-overlay show`} id="pinOverlay">
-      <div className={`pin-box ${shake ? "pin-shake" : ""} ${lockedOut ? "pin-lockout" : ""}`}>
+      <div
+        className={`pin-box ${shake ? "pin-shake" : ""} ${lockedOut ? "pin-lockout" : ""}`}
+      >
         <div className={`pin-icon ${lockedOut ? "pin-icon-danger" : ""}`}>
           <i className={iconClass}></i>
         </div>
@@ -223,9 +269,7 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
         )}
 
         {/* Error / Info Message */}
-        {message && !lockedOut && (
-          <p className="pin-message">{message}</p>
-        )}
+        {message && !lockedOut && <p className="pin-message">{message}</p>}
 
         {/* Attempt indicator dots (●●●) */}
         {showAttemptDots && failedAttempts > 0 && (
@@ -242,24 +286,44 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
         {/* PIN dots */}
         {!lockedOut && (
           <div className="pin-dots" id="pinDots">
-            <span className={`dot ${currentDots.length >= 1 ? "filled" : ""}`}></span>
-            <span className={`dot ${currentDots.length >= 2 ? "filled" : ""}`}></span>
-            <span className={`dot ${currentDots.length >= 3 ? "filled" : ""}`}></span>
-            <span className={`dot ${currentDots.length >= 4 ? "filled" : ""}`}></span>
+            <span
+              className={`dot ${currentDots.length >= 1 ? "filled" : ""}`}
+            ></span>
+            <span
+              className={`dot ${currentDots.length >= 2 ? "filled" : ""}`}
+            ></span>
+            <span
+              className={`dot ${currentDots.length >= 3 ? "filled" : ""}`}
+            ></span>
+            <span
+              className={`dot ${currentDots.length >= 4 ? "filled" : ""}`}
+            ></span>
           </div>
         )}
 
         {/* Keypad */}
         <div className={`pin-keypad ${lockedOut ? "pin-keypad-disabled" : ""}`}>
-          {["1","2","3","4","5","6","7","8","9"].map((d) => (
-            <button key={d} onClick={() => pressPin(d)} disabled={lockedOut}>{d}</button>
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
+            <button key={d} onClick={() => pressPin(d)} disabled={lockedOut}>
+              {d}
+            </button>
           ))}
-          <button className="pin-action" onClick={clearLast} disabled={lockedOut}>
+          <button
+            className="pin-action"
+            onClick={clearLast}
+            disabled={lockedOut}
+          >
             <i className="fa-solid fa-delete-left"></i>
           </button>
-          <button onClick={() => pressPin("0")} disabled={lockedOut}>0</button>
+          <button onClick={() => pressPin("0")} disabled={lockedOut}>
+            0
+          </button>
           {(mode === "setup" || mode === "disable") && onCancel ? (
-            <button className="pin-action pin-cancel" onClick={onCancel} disabled={lockedOut}>
+            <button
+              className="pin-action pin-cancel"
+              onClick={onCancel}
+              disabled={lockedOut}
+            >
               <i className="fa-solid fa-xmark"></i>
             </button>
           ) : (
@@ -272,8 +336,12 @@ export const PinLockOverlay: React.FC<PinLockOverlayProps> = ({
         {/* Step indicator for setup */}
         {mode === "setup" && !lockedOut && (
           <div className="pin-step-indicator">
-            <span className={`pin-step-dot ${step === "enter" ? "active" : "done"}`}></span>
-            <span className={`pin-step-dot ${step === "confirm" ? "active" : ""}`}></span>
+            <span
+              className={`pin-step-dot ${step === "enter" ? "active" : "done"}`}
+            ></span>
+            <span
+              className={`pin-step-dot ${step === "confirm" ? "active" : ""}`}
+            ></span>
           </div>
         )}
       </div>

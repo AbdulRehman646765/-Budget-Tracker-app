@@ -108,16 +108,6 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
           </button>
         </div>
       </div>
-      <div className="search-wrapper">
-        <i className="fa-solid fa-magnifying-glass search-icon"></i>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search history..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
       {hideAmounts ? (
         <div className="chart-locked">
           <i className="fa-solid fa-lock"></i>
