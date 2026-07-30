@@ -235,7 +235,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             className={`settings-tab-btn ${activeTab === "visibility" ? "active" : ""}`}
             onClick={() => setActiveTab("visibility")}
           >
-            <i className="fa-solid fa-eye"></i> Form Fields (Hide/Show)
+            <i className="fa-solid fa-eye"></i> Form Fields
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "custom_fields" ? "active" : ""}`}
@@ -247,7 +247,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             className={`settings-tab-btn ${activeTab === "backup" ? "active" : ""}`}
             onClick={() => setActiveTab("backup")}
           >
-            <i className="fa-solid fa-database"></i> Backup & Restore (JSON)
+            <i className="fa-solid fa-database"></i> Backup & Restore
           </button>
         </div>
 

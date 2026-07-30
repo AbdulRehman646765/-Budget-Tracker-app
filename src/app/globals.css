@@ -2859,6 +2859,7 @@ body,
 
 .settings-tabs {
   display: flex;
+  justify-content: space-between;
   gap: 8px;
   border-bottom: 1px solid var(--border-card);
   padding-bottom: 12px;
@@ -2866,7 +2867,7 @@ body,
 }
 
 .settings-tab-btn {
-  padding: 8px 14px;
+  padding: 8px 22px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
