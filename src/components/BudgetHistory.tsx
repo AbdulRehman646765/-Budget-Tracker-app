@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { CurrencySymbol, HistoryEntry } from "@/types/budget";
+import { CurrencySymbol, CustomExpense, HistoryEntry } from "@/types/budget";
 
 interface BudgetHistoryProps {
   history: HistoryEntry[];
   currency: CurrencySymbol;
+  customExpenses?: CustomExpense[];
   onEdit: (entry: HistoryEntry) => void;
   onDelete: (id: string) => void;
   hideAmounts?: boolean;
@@ -14,6 +15,7 @@ interface BudgetHistoryProps {
 export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
   history,
   currency,
+  customExpenses = [],
   onEdit,
   onDelete,
   hideAmounts = false,
@@ -27,7 +29,8 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
   });
 
   const exportCSV = () => {
-    if (history.length === 0) return;
+    if (history.length === 0 && customExpenses.length === 0) return;
+    
     const headers =
       "Date,Salary,Grocery,Vegetables,Fruits,Transport,Mobile,Expense,Remaining\n";
     const rows = history
@@ -37,7 +40,16 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
       )
       .join("\n");
 
-    const blob = new Blob([headers + rows], {
+    let csvContent = headers + rows;
+
+    if (customExpenses.length > 0) {
+      csvContent += "\n\n--- Custom Expenses Itemized Breakdown ---\nName,Category,Amount\n";
+      csvContent += customExpenses
+        .map((e) => `"${e.name}","${e.category}","${e.amount}"`)
+        .join("\n");
+    }
+
+    const blob = new Blob([csvContent], {
       type: "text/csv;charset=utf-8;",
     });
     const url = URL.createObjectURL(blob);
@@ -50,13 +62,31 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
   };
 
   const exportPDF = () => {
-    if (history.length === 0) return;
+    if (history.length === 0 && customExpenses.length === 0) return;
     const tableRows = history
       .map(
         (e) =>
           `<tr><td>${e.date}</td><td>${e.salary}</td><td>${e.grocery}</td><td>${e.vegetables}</td><td>${e.fruits}</td><td>${e.transport}</td><td>${e.mobile}</td><td>${e.expense}</td><td>${e.remaining}</td></tr>`,
       )
       .join("");
+
+    let customExpHtml = "";
+    if (customExpenses.length > 0) {
+      const customRows = customExpenses
+        .map(
+          (e) => `<tr><td>${e.name}</td><td>${e.category}</td><td>${currency} ${e.amount.toLocaleString()}</td></tr>`
+        )
+        .join("");
+      customExpHtml = `
+        <h3 style="margin-top: 25px; color: #4f46e5;">🏷️ Itemized Custom Expenses</h3>
+        <table>
+          <thead>
+            <tr><th>Item Name</th><th>Category</th><th>Amount</th></tr>
+          </thead>
+          <tbody>${customRows}</tbody>
+        </table>
+      `;
+    }
 
     const printWindow = window.open("", "", "height=700,width=900");
     if (!printWindow) return;
@@ -83,6 +113,7 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
           </thead>
           <tbody>${tableRows}</tbody>
         </table>
+        ${customExpHtml}
         <script>window.onload = function() { window.print(); window.close(); }<\/script>
       </body>
       </html>
@@ -100,10 +131,10 @@ export const BudgetHistory: React.FC<BudgetHistoryProps> = ({
           <i className="fa-solid fa-clock-rotate-left"></i> Budget History
         </h2>
         <div className="export-btns">
-          <button className="icon-btn" onClick={exportCSV} title="Export CSV">
+          <button className="icon-btn" onClick={exportCSV} title="Export CSV (with Custom Expenses)">
             <i className="fa-solid fa-file-csv"></i>
           </button>
-          <button className="icon-btn" onClick={exportPDF} title="Export PDF">
+          <button className="icon-btn" onClick={exportPDF} title="Export PDF (with Custom Expenses)">
             <i className="fa-solid fa-file-pdf"></i>
           </button>
         </div>

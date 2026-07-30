@@ -2,6 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import { CurrencySymbol } from "@/types/budget";
+import { CustomSelect, CustomSelectOption } from "@/components/CustomSelect";
+
+const CURRENCY_OPTIONS: CustomSelectOption[] = [
+{ value: "Rs.", label: "PKR", iconName: "fa-solid fa-rupee-sign" },
+  { value: "$",   label: "USD", iconName: "fa-solid fa-dollar-sign" },
+  { value: "€",   label: "EUR", iconName: "fa-solid fa-euro-sign" },
+  { value: "AED", label: "AED", iconName: "fa-solid fa-money-bill-wave" },
+  { value: "SR",  label: "SAR", iconName: "fa-solid fa-sack-dollar" },
+  { value: "₹",   label: "INR", iconName: "fa-solid fa-indian-rupee-sign" },
+];
 
 interface HeaderProps {
   currency: CurrencySymbol;
@@ -11,6 +21,7 @@ interface HeaderProps {
   onThemeToggle: () => void;
   onCalculatorClick: () => void;
   onSettingsClick: () => void;
+  onDebtsClick: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -21,6 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   onThemeToggle,
   onCalculatorClick,
   onSettingsClick,
+  onDebtsClick,
 }) => {
   const [currentDate, setCurrentDate] = useState("");
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
@@ -53,19 +65,12 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="header-desktop-actions">
           {/* Currency Selector */}
           <div className="currency-select-wrapper">
-            <i className="fa-solid fa-coins currency-icon"></i>
-            <select
-              id="currencySelect"
+            <CustomSelect
+              options={CURRENCY_OPTIONS}
               value={currency}
-              onChange={(e) => onCurrencyChange(e.target.value as CurrencySymbol)}
-            >
-              <option value="Rs.">PKR (Rs.)</option>
-              <option value="$">USD ($)</option>
-              <option value="€">EUR (€)</option>
-              <option value="AED">AED (AED)</option>
-              <option value="SR">SAR (SR)</option>
-              <option value="₹">INR (₹)</option>
-            </select>
+              onChange={(val) => onCurrencyChange(val as CurrencySymbol)}
+              placeholder="Currency"
+            />
           </div>
 
           {/* Quick Calculator Button */}
@@ -76,6 +81,16 @@ export const Header: React.FC<HeaderProps> = ({
             title="Quick Calculator"
           >
             <i className="fa-solid fa-calculator"></i>
+          </button>
+
+          {/* Debts & Dues (Paisy Leny/Deny) Button */}
+          <button
+            className="icon-btn"
+            id="debtsBtn"
+            onClick={onDebtsClick}
+            title="Paisy Leny / Deny (Debts)"
+          >
+            <i className="fa-solid fa-hand-holding-dollar"></i>
           </button>
 
           {/* App & Form Settings Button */}
@@ -129,21 +144,15 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Currency Selector inside Mobile Menu */}
               <div className="dropdown-tool-row">
                 <label><i className="fa-solid fa-coins"></i> Currency</label>
-                <select
+                <CustomSelect
+                  options={CURRENCY_OPTIONS}
                   value={currency}
-                  onChange={(e) => {
-                    onCurrencyChange(e.target.value as CurrencySymbol);
+                  onChange={(val) => {
+                    onCurrencyChange(val as CurrencySymbol);
                     setShowToolsDropdown(false);
                   }}
-                  className="mobile-currency-select"
-                >
-                  <option value="Rs.">PKR (Rs.)</option>
-                  <option value="$">USD ($)</option>
-                  <option value="€">EUR (€)</option>
-                  <option value="AED">AED (AED)</option>
-                  <option value="SR">SAR (SR)</option>
-                  <option value="₹">INR (₹)</option>
-                </select>
+                  placeholder="Currency"
+                />
               </div>
 
               {/* Quick Calculator inside Mobile Menu */}
@@ -155,6 +164,17 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
               >
                 <i className="fa-solid fa-calculator"></i> Quick Calculator
+              </button>
+
+              {/* Paisy Leny / Deny inside Mobile Menu */}
+              <button
+                className="dropdown-tool-btn"
+                onClick={() => {
+                  onDebtsClick();
+                  setShowToolsDropdown(false);
+                }}
+              >
+                <i className="fa-solid fa-hand-holding-dollar"></i> Paisy Leny / Deny (Debts)
               </button>
 
               {/* App Settings inside Mobile Menu */}

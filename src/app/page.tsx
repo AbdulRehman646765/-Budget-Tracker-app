@@ -24,6 +24,7 @@ import { ToastProvider, useToast } from "@/components/Toast";
 import { CategoryManagerModal } from "@/components/CategoryManagerModal";
 import { QuickCalculatorModal } from "@/components/QuickCalculatorModal";
 import { SettingsModal } from "@/components/SettingsModal";
+import { DebtsModal } from "@/components/DebtsModal";
 import { DEFAULT_CATEGORIES, buildCategoriesMap } from "@/lib/categories";
 
 import {
@@ -37,6 +38,8 @@ import {
   CustomFormField,
   FieldVisibilityMap,
   CustomFieldValuesMap,
+  DebtEntry,
+  AppDataBackup,
 } from "@/types/budget";
 
 type ToolKey =
@@ -108,12 +111,14 @@ function MainApp() {
     useState<boolean>(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const [showDebtsModal, setShowDebtsModal] = useState<boolean>(false);
   const [userCustomCategories, setUserCustomCategories] = useState<
     CategoryConfig[]
   >([]);
   const [customFormFields, setCustomFormFields] = useState<CustomFormField[]>([]);
   const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValuesMap>({});
   const [fieldVisibility, setFieldVisibility] = useState<FieldVisibilityMap>({});
+  const [debts, setDebts] = useState<DebtEntry[]>([]);
   const [showAlertBanner, setShowAlertBanner] = useState<boolean>(false);
   const [alertBannerText, setAlertBannerText] = useState<string>("");
 
@@ -186,7 +191,11 @@ function MainApp() {
 
     const savedVisibility = localStorage.getItem("budgetFieldVisibility");
     if (savedVisibility) setFieldVisibility(JSON.parse(savedVisibility));
+
+    const savedDebts = localStorage.getItem("debtsAndDues");
+    if (savedDebts) setDebts(JSON.parse(savedDebts));
   }, []);
+
 
   // Check if PIN is set before allowing actions
   const checkPinAccess = () => {
@@ -286,6 +295,169 @@ function MainApp() {
     localStorage.setItem("customFormFields", JSON.stringify(updated));
     showToast("Custom input removed");
   };
+
+  // Debts & Dues Handlers
+  const handleAddDebt = (newDebt: DebtEntry) => {
+    if (!checkPinAccess()) return;
+    const updated = [newDebt, ...debts];
+    setDebts(updated);
+    localStorage.setItem("debtsAndDues", JSON.stringify(updated));
+    showToast(`Record added for ${newDebt.personName}!`);
+  };
+
+  const handleToggleDebtStatus = (id: string) => {
+    if (!checkPinAccess()) return;
+    const updated = debts.map((d) =>
+      d.id === id
+        ? {
+            ...d,
+            status: (d.status === "settled" ? "pending" : "settled") as
+              | "pending"
+              | "settled",
+          }
+        : d
+    );
+    setDebts(updated);
+    localStorage.setItem("debtsAndDues", JSON.stringify(updated));
+    showToast("Status updated!");
+  };
+
+  const handleDeleteDebt = (id: string) => {
+    if (!checkPinAccess()) return;
+    const updated = debts.filter((d) => d.id !== id);
+    setDebts(updated);
+    localStorage.setItem("debtsAndDues", JSON.stringify(updated));
+    showToast("Record removed");
+  };
+
+  // JSON Import & Export Backup Handlers
+  const handleExportJSON = () => {
+    if (!checkPinAccess()) return;
+    const backupData: AppDataBackup = {
+      version: "1.0",
+      exportDate: new Date().toISOString(),
+      currency,
+      salary,
+      grocery,
+      vegetables,
+      fruits,
+      transport,
+      mobile,
+      goal,
+      customExpenses,
+      subscriptions,
+      history,
+      monthlyHistory,
+      alertSettings,
+      userCustomCategories,
+      customFormFields,
+      customFieldValues,
+      fieldVisibility,
+      debts,
+    };
+
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `budget_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast("JSON Backup downloaded successfully!");
+  };
+
+  const handleImportJSON = (file: File) => {
+    if (!checkPinAccess()) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const data = JSON.parse(text) as AppDataBackup;
+
+        if (data.currency) {
+          setCurrency(data.currency);
+          localStorage.setItem("selectedCurrency", data.currency);
+        }
+        if (data.salary !== undefined) {
+          setSalary(data.salary);
+          localStorage.setItem("salary", String(data.salary));
+        }
+        if (data.grocery !== undefined) {
+          setGrocery(data.grocery);
+          localStorage.setItem("grocery", String(data.grocery));
+        }
+        if (data.vegetables !== undefined) {
+          setVegetables(data.vegetables);
+          localStorage.setItem("vegetables", String(data.vegetables));
+        }
+        if (data.fruits !== undefined) {
+          setFruits(data.fruits);
+          localStorage.setItem("fruits", String(data.fruits));
+        }
+        if (data.transport !== undefined) {
+          setTransport(data.transport);
+          localStorage.setItem("transport", String(data.transport));
+        }
+        if (data.mobile !== undefined) {
+          setMobile(data.mobile);
+          localStorage.setItem("mobile", String(data.mobile));
+        }
+        if (data.goal !== undefined) {
+          setGoal(data.goal);
+          localStorage.setItem("goal", String(data.goal));
+        }
+        if (data.customExpenses) {
+          setCustomExpenses(data.customExpenses);
+          localStorage.setItem("customExpenses", JSON.stringify(data.customExpenses));
+        }
+        if (data.subscriptions) {
+          setSubscriptions(data.subscriptions);
+          localStorage.setItem("subscriptions", JSON.stringify(data.subscriptions));
+        }
+        if (data.history) {
+          setHistory(data.history);
+          localStorage.setItem("budgetHistory", JSON.stringify(data.history));
+        }
+        if (data.monthlyHistory) {
+          setMonthlyHistory(data.monthlyHistory);
+          localStorage.setItem("monthlyHistory", JSON.stringify(data.monthlyHistory));
+        }
+        if (data.alertSettings) {
+          setAlertSettings(data.alertSettings);
+          localStorage.setItem("budgetAlertSettings", JSON.stringify(data.alertSettings));
+        }
+        if (data.userCustomCategories) {
+          setUserCustomCategories(data.userCustomCategories);
+          localStorage.setItem("userCustomCategories", JSON.stringify(data.userCustomCategories));
+        }
+        if (data.customFormFields) {
+          setCustomFormFields(data.customFormFields);
+          localStorage.setItem("customFormFields", JSON.stringify(data.customFormFields));
+        }
+        if (data.customFieldValues) {
+          setCustomFieldValues(data.customFieldValues);
+          localStorage.setItem("customFieldValues", JSON.stringify(data.customFieldValues));
+        }
+        if (data.fieldVisibility) {
+          setFieldVisibility(data.fieldVisibility);
+          localStorage.setItem("budgetFieldVisibility", JSON.stringify(data.fieldVisibility));
+        }
+        if (data.debts) {
+          setDebts(data.debts);
+          localStorage.setItem("debtsAndDues", JSON.stringify(data.debts));
+        }
+
+        showToast("Backup restored & data reloaded successfully!");
+      } catch (err) {
+        showToast("Invalid JSON Backup File!", "error");
+      }
+    };
+    reader.readAsText(file);
+  };
+
 
   // Calculations
   const customTotal = customExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -692,7 +864,9 @@ function MainApp() {
           onThemeToggle={toggleTheme}
           onCalculatorClick={() => setShowCalculatorModal(true)}
           onSettingsClick={() => setShowSettingsModal(true)}
+          onDebtsClick={() => setShowDebtsModal(true)}
         />
+
 
         {/* Summary Cards */}
         <SummaryCards
@@ -829,11 +1003,13 @@ function MainApp() {
           <BudgetHistory
             history={history}
             currency={currency}
+            customExpenses={customExpenses}
             onEdit={handleEditHistoryRow}
             onDelete={handleDeleteHistoryRow}
             hideAmounts={!appPin || isLocked}
           />
         )}
+
 
         {/* Tool 7: Alert Settings */}
         {visibleTools.alert && (
@@ -910,10 +1086,25 @@ function MainApp() {
         onAddCustomField={handleAddCustomField}
         onUpdateCustomField={handleUpdateCustomField}
         onDeleteCustomField={handleDeleteCustomField}
+        onExportJSON={handleExportJSON}
+        onImportJSON={handleImportJSON}
+      />
+
+      {/* Debts & Dues Modal */}
+      <DebtsModal
+        show={showDebtsModal}
+        onClose={() => setShowDebtsModal(false)}
+        debts={debts}
+        currency={currency}
+        onAddDebt={handleAddDebt}
+        onToggleStatus={handleToggleDebtStatus}
+        onDeleteDebt={handleDeleteDebt}
+        hideAmounts={!appPin || isLocked}
       />
     </>
   );
 }
+
 
 export default function Home() {
   return (

@@ -71,3 +71,37 @@ export interface CustomFieldValuesMap {
   [key: string]: number;
 }
 
+export interface DebtEntry {
+  id: string;
+  type: 'receivable' | 'payable'; // 'receivable' = Paisy Leny, 'payable' = Paisy Deny
+  personName: string;
+  amount: number;
+  date: string;
+  notes?: string;
+  status: 'pending' | 'settled';
+}
+
+export interface AppDataBackup {
+  version: string;
+  exportDate: string;
+  currency: CurrencySymbol;
+  salary: number;
+  grocery: number;
+  vegetables: number;
+  fruits: number;
+  transport: number;
+  mobile: number;
+  goal: number;
+  customExpenses: CustomExpense[];
+  subscriptions: Subscription[];
+  history: HistoryEntry[];
+  monthlyHistory: MonthlySummary[];
+  alertSettings: BudgetAlertSettings;
+  userCustomCategories: CategoryConfig[];
+  customFormFields: CustomFormField[];
+  customFieldValues: CustomFieldValuesMap;
+  fieldVisibility: FieldVisibilityMap;
+  debts: DebtEntry[];
+}
+
+

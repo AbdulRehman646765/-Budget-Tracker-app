@@ -2720,6 +2720,135 @@ body,
   box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
 }
 
+/* Calculator History Toggle & Drawer */
+.calc-history-toggle {
+  position: relative;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: var(--transition);
+}
+
+.calc-history-toggle:hover,
+.calc-history-toggle.active {
+  background: var(--primary-500);
+  color: white;
+  border-color: var(--primary-500);
+}
+
+.history-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--danger-500);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+.calc-history-panel {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  min-height: 270px;
+  max-height: 310px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.calc-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+}
+
+.calc-history-clear-btn {
+  background: none;
+  border: none;
+  color: var(--danger-400);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.calc-history-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.calc-history-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.calc-history-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.calc-history-list::-webkit-scrollbar {
+  width: 4px;
+}
+.calc-history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.calc-history-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: right;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.calc-history-item:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.calc-history-expr {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.calc-history-res {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary-400);
+}
+
 /* ---------- Settings Modal & Visibility ---------- */
 .settings-modal-box {
   max-width: 580px !important;
@@ -2827,5 +2956,572 @@ body,
   height: 18px;
   accent-color: var(--primary-500);
   cursor: pointer;
+}
+
+/* ---------- Backup & Restore (JSON) ---------- */
+.backup-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.backup-box {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.backup-box-icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.backup-box h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.backup-box p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+  .backup-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Debts & Dues Modal ---------- */
+.debts-modal-box {
+  max-width: 620px !important;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.debts-summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.debt-summary-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.debt-card-leny .debt-summary-icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.debt-card-deny .debt-summary-icon {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.debt-summary-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.debt-summary-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.debts-list-container {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  padding-right: 4px;
+}
+
+.debt-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.debt-item-row.settled {
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.debt-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.debt-type-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.debt-type-badge.leny {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.debt-type-badge.deny {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.debt-person-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.debt-status-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.status-settled {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.debt-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.debt-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.debt-amount {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.text-leny {
+  color: #4ade80;
+}
+
+.text-deny {
+  color: #f87171;
+}
+
+/* ================================================
+   CUSTOM SELECT — Glassmorphic Portal Dropdown
+   ================================================ */
+
+/* Wrapper around the trigger button */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-select-wrapper.full-width {
+  display: block;
+  width: 100%;
+}
+
+/* ---- Trigger Button ---- */
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition),
+    box-shadow var(--transition);
+  text-align: left;
+  outline: none;
+  min-height: 42px;
+}
+
+.custom-select-trigger:hover {
+  background: var(--bg-input-focus);
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.custom-select-trigger[aria-expanded="true"] {
+  background: var(--bg-input-focus);
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+/* Left side: icon + label */
+.custom-select-trigger-content {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+
+.custom-trigger-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.custom-trigger-placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Chevron arrow — animates on open */
+.custom-trigger-chevron {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-trigger-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* ---- Icon & Color dot in trigger / options ---- */
+.custom-option-icon {
+  font-size: 14px;
+  color: var(--primary-400);
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.custom-option-color-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ---- Portal Dropdown List ---- */
+.custom-select-portal-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(99, 102, 241, 0.1);
+  max-height: 260px;
+  overflow-y: auto;
+  animation: selectDropIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: top center;
+  overscroll-behavior: contain;
+}
+
+.custom-select-portal-list.upward {
+  animation: selectDropInUpward 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: bottom center;
+}
+
+@keyframes selectDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes selectDropInUpward {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Scrollbar styling */
+.custom-select-portal-list::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-select-portal-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-select-portal-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+.custom-select-portal-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ---- Individual Option ---- */
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.custom-select-option:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--text-primary);
+}
+
+.custom-select-option.selected {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary-400);
+}
+
+.custom-select-option.selected .custom-option-icon {
+  color: var(--primary-400);
+}
+
+.custom-option-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Checkmark on selected option */
+.custom-option-check {
+  font-size: 11px;
+  color: var(--primary-400);
+  flex-shrink: 0;
+  animation: checkPop 0.2s ease forwards;
+}
+
+@keyframes checkPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ================================================
+   LIGHT THEME OVERRIDES — CustomSelect
+   ================================================ */
+.light .custom-select-trigger {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #1e293b;
+}
+
+.light .custom-select-trigger:hover,
+.light .custom-select-trigger[aria-expanded="true"] {
+  background: rgba(99, 102, 241, 0.06);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.light .custom-trigger-label {
+  color: #1e293b;
+}
+
+.light .custom-trigger-placeholder {
+  color: #94a3b8;
+}
+
+.light .custom-trigger-chevron {
+  color: #64748b;
+}
+
+.light .custom-option-icon {
+  color: var(--primary-600);
+}
+
+.light .custom-select-portal-list {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15),
+    inset 0 0 0 1px rgba(99, 102, 241, 0.06);
+}
+
+.light .custom-select-option {
+  color: #475569;
+}
+
+.light .custom-select-option:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #1e293b;
+}
+
+.light .custom-select-option.selected {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--primary-600);
+}
+
+.light .custom-select-option.selected .custom-option-icon {
+  color: var(--primary-600);
+}
+
+.light .custom-select-portal-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* ================================================
+   HEADER — Currency Select Wrapper
+   ================================================ */
+.currency-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 6px 4px 6px 10px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.currency-select-wrapper:has(.custom-select-trigger[aria-expanded="true"]) {
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.currency-icon {
+  font-size: 12px;
+  color: var(--primary-400);
+  flex-shrink: 0;
+}
+
+/* Make the trigger compact inside the header wrapper */
+.currency-select-wrapper .custom-select-wrapper {
+  min-width: 105px;
+}
+
+.currency-select-wrapper .custom-select-trigger {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 3px 6px 3px 0;
+  min-height: unset;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Light theme — currency wrapper */
+.light .currency-select-wrapper {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.light .currency-icon {
+  color: var(--primary-600);
+}
+
+.light .currency-select-wrapper .custom-select-trigger {
+  color: #1e293b;
+}
+
+/* ================================================
+   MOBILE — Dropdown Tool Row (currency in menu)
+   ================================================ */
+.dropdown-tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+}
+
+.dropdown-tool-row label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dropdown-tool-row .custom-select-wrapper {
+  flex: 1;
+  min-width: 130px;
+  max-width: 190px;
+}
+
+.dropdown-tool-row .custom-select-trigger {
+  padding: 7px 10px;
+  font-size: 12px;
+  min-height: 36px;
 }
 
