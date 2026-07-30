@@ -47,7 +47,8 @@ const PRESET_ICONS = [
   "fa-solid fa-tree",
   "fa-solid fa-heart",
   "fa-solid fa-star",
-  "fa-solid fa-basketball",
+  // "fa-solid fa-basketball",
+  "fa-solid fa-glass-water-droplet"
 ];
 
 export const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({

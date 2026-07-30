@@ -2517,3 +2517,315 @@ body,
     font-size: 11.5px;
   }
 }
+
+/* ---------- Header Responsive Actions & Extra Tools Dropdown ---------- */
+.header-desktop-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-mobile-tools {
+  display: none;
+  position: relative;
+}
+
+.extra-tools-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.extra-tools-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeSlideDown 0.25s ease-out;
+}
+
+.dropdown-item-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-card);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.dropdown-tool-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.mobile-currency-select {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-input);
+  font-size: 12px;
+  outline: none;
+}
+
+.mobile-currency-select option {
+  background: var(--gray-900);
+}
+
+.dropdown-tool-btn {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.dropdown-tool-btn:hover {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-500);
+}
+
+/* Responsive adjustment for Header */
+@media (max-width: 768px) {
+  .header-desktop-actions {
+    display: none !important;
+  }
+  .header-mobile-tools {
+    display: block !important;
+  }
+}
+
+/* ---------- Quick Calculator Modal ---------- */
+.calc-modal-box {
+  max-width: 330px !important;
+  padding: 20px !important;
+}
+
+.calc-display-wrap {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  text-align: right;
+  margin-bottom: 16px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.calc-history {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-height: 16px;
+}
+
+.calc-main-display {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.calc-keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.calc-btn {
+  height: 48px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calc-btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.calc-btn.calc-action {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--warning-400);
+}
+
+.calc-btn.calc-op {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary-400);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.calc-btn.calc-op.active,
+.calc-btn.calc-op:hover {
+  background: var(--primary-500);
+  color: white;
+}
+
+.calc-btn.calc-equals {
+  background: linear-gradient(135deg, var(--success-500), var(--success-600));
+  color: white;
+  border: none;
+  font-weight: 700;
+}
+
+.calc-btn.calc-equals:hover {
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+}
+
+/* ---------- Settings Modal & Visibility ---------- */
+.settings-modal-box {
+  max-width: 580px !important;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-card);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.settings-tab-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.settings-tab-btn.active {
+  background: var(--primary-500);
+  color: white;
+  border-color: var(--primary-500);
+}
+
+.settings-tab-body {
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.settings-subtext {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.visibility-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visibility-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.visibility-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.visibility-item-row:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--primary-400);
+}
+
+.visibility-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.visibility-item-left i {
+  color: var(--primary-400);
+  width: 18px;
+  text-align: center;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-500);
+  cursor: pointer;
+}
+

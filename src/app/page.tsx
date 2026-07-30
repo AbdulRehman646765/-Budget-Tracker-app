@@ -22,6 +22,8 @@ import { PinLockOverlay } from "@/components/PinLockOverlay";
 import { AlertBanner } from "@/components/AlertBanner";
 import { ToastProvider, useToast } from "@/components/Toast";
 import { CategoryManagerModal } from "@/components/CategoryManagerModal";
+import { QuickCalculatorModal } from "@/components/QuickCalculatorModal";
+import { SettingsModal } from "@/components/SettingsModal";
 import { DEFAULT_CATEGORIES, buildCategoriesMap } from "@/lib/categories";
 
 import {
@@ -32,6 +34,9 @@ import {
   MonthlySummary,
   CategoryKey,
   CategoryConfig,
+  CustomFormField,
+  FieldVisibilityMap,
+  CustomFieldValuesMap,
 } from "@/types/budget";
 
 type ToolKey =
@@ -101,9 +106,14 @@ function MainApp() {
   const [showAddSubModal, setShowAddSubModal] = useState<boolean>(false);
   const [showCategoryManagerModal, setShowCategoryManagerModal] =
     useState<boolean>(false);
+  const [showCalculatorModal, setShowCalculatorModal] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [userCustomCategories, setUserCustomCategories] = useState<
     CategoryConfig[]
   >([]);
+  const [customFormFields, setCustomFormFields] = useState<CustomFormField[]>([]);
+  const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValuesMap>({});
+  const [fieldVisibility, setFieldVisibility] = useState<FieldVisibilityMap>({});
   const [showAlertBanner, setShowAlertBanner] = useState<boolean>(false);
   const [alertBannerText, setAlertBannerText] = useState<string>("");
 
@@ -167,6 +177,15 @@ function MainApp() {
     setTransport(Number(localStorage.getItem("transport")) || 0);
     setMobile(Number(localStorage.getItem("mobile")) || 0);
     setGoal(Number(localStorage.getItem("goal")) || 0);
+
+    const savedFormFields = localStorage.getItem("customFormFields");
+    if (savedFormFields) setCustomFormFields(JSON.parse(savedFormFields));
+
+    const savedFieldValues = localStorage.getItem("customFieldValues");
+    if (savedFieldValues) setCustomFieldValues(JSON.parse(savedFieldValues));
+
+    const savedVisibility = localStorage.getItem("budgetFieldVisibility");
+    if (savedVisibility) setFieldVisibility(JSON.parse(savedVisibility));
   }, []);
 
   // Check if PIN is set before allowing actions
@@ -232,14 +251,65 @@ function MainApp() {
     localStorage.setItem("goal", String(val));
   };
 
+  // Custom Form Input Value Change
+  const handleCustomFieldValueChange = (key: string, val: number) => {
+    const updated = { ...customFieldValues, [key]: val };
+    setCustomFieldValues(updated);
+    localStorage.setItem("customFieldValues", JSON.stringify(updated));
+  };
+
+  const handleVisibilityChange = (updated: FieldVisibilityMap) => {
+    setFieldVisibility(updated);
+    localStorage.setItem("budgetFieldVisibility", JSON.stringify(updated));
+    showToast("Field visibility updated!");
+  };
+
+  const handleAddCustomField = (newField: CustomFormField) => {
+    const updated = [...customFormFields, newField];
+    setCustomFormFields(updated);
+    localStorage.setItem("customFormFields", JSON.stringify(updated));
+    showToast(`Custom input "${newField.label}" added to form!`);
+  };
+
+  const handleUpdateCustomField = (updatedField: CustomFormField) => {
+    const updated = customFormFields.map((f) =>
+      f.id === updatedField.id ? updatedField : f
+    );
+    setCustomFormFields(updated);
+    localStorage.setItem("customFormFields", JSON.stringify(updated));
+    showToast("Custom input updated!");
+  };
+
+  const handleDeleteCustomField = (id: string) => {
+    const updated = customFormFields.filter((f) => f.id !== id);
+    setCustomFormFields(updated);
+    localStorage.setItem("customFormFields", JSON.stringify(updated));
+    showToast("Custom input removed");
+  };
+
   // Calculations
   const customTotal = customExpenses.reduce((sum, e) => sum + e.amount, 0);
+
+  const customFormFieldsTotal = customFormFields.reduce((sum, field) => {
+    if (fieldVisibility[field.key] === false) return sum;
+    const val = customFieldValues[field.key] ?? field.defaultValue ?? 0;
+    return sum + (Number(val) || 0);
+  }, 0);
+
+  const activeGrocery = fieldVisibility.grocery !== false ? grocery : 0;
+  const activeVegetables = fieldVisibility.vegetables !== false ? vegetables : 0;
+  const activeFruits = fieldVisibility.fruits !== false ? fruits : 0;
+  const activeTransport = fieldVisibility.transport !== false ? transport : 0;
+  const activeMobile = fieldVisibility.mobile !== false ? mobile : 0;
+  const activeSalary = fieldVisibility.salary !== false ? salary : 0;
+
   const totalExpenses =
-    grocery + vegetables + fruits + transport + mobile + customTotal;
-  const remaining = salary - totalExpenses;
+    activeGrocery + activeVegetables + activeFruits + activeTransport + activeMobile + customFormFieldsTotal + customTotal;
+
+  const remaining = activeSalary - totalExpenses;
 
   const percent =
-    salary > 0 ? Math.min((totalExpenses / salary) * 100, 100) : 0;
+    activeSalary > 0 ? Math.min((totalExpenses / activeSalary) * 100, 100) : 0;
 
   const hideAmounts = appPin === "";
 
@@ -620,6 +690,8 @@ function MainApp() {
           onPinClick={handlePinToggleClick}
           theme={theme}
           onThemeToggle={toggleTheme}
+          onCalculatorClick={() => setShowCalculatorModal(true)}
+          onSettingsClick={() => setShowSettingsModal(true)}
         />
 
         {/* Summary Cards */}
@@ -644,6 +716,9 @@ function MainApp() {
           mobile={mobile}
           goal={goal}
           currency={currency}
+          fieldVisibility={fieldVisibility}
+          customFormFields={customFormFields}
+          customFieldValues={customFieldValues}
           onSalaryChange={handleSalaryChange}
           onGroceryChange={handleGroceryChange}
           onVegetablesChange={handleVegetablesChange}
@@ -651,6 +726,7 @@ function MainApp() {
           onTransportChange={handleTransportChange}
           onMobileChange={handleMobileChange}
           onGoalChange={handleGoalChange}
+          onCustomFieldValueChange={handleCustomFieldValueChange}
           onRefresh={handleRefresh}
           onSave={handleSave}
           onReset={handleReset}
@@ -816,6 +892,24 @@ function MainApp() {
         onClose={() => setShowCategoryManagerModal(false)}
         onAddCategory={handleAddCategory}
         onDeleteCategory={handleDeleteCategory}
+      />
+
+      {/* Quick Calculator Modal */}
+      <QuickCalculatorModal
+        show={showCalculatorModal}
+        onClose={() => setShowCalculatorModal(false)}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        show={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        visibility={fieldVisibility}
+        onVisibilityChange={handleVisibilityChange}
+        customFields={customFormFields}
+        onAddCustomField={handleAddCustomField}
+        onUpdateCustomField={handleUpdateCustomField}
+        onDeleteCustomField={handleDeleteCustomField}
       />
     </>
   );

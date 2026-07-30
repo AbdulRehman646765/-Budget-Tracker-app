@@ -9,6 +9,8 @@ interface HeaderProps {
   onPinClick: () => void;
   theme: "dark" | "light";
   onThemeToggle: () => void;
+  onCalculatorClick: () => void;
+  onSettingsClick: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,8 +19,11 @@ export const Header: React.FC<HeaderProps> = ({
   onPinClick,
   theme,
   onThemeToggle,
+  onCalculatorClick,
+  onSettingsClick,
 }) => {
   const [currentDate, setCurrentDate] = useState("");
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
 
   useEffect(() => {
     const today = new Date();
@@ -42,41 +47,152 @@ export const Header: React.FC<HeaderProps> = ({
           <p className="header-date" id="todayDate">{currentDate}</p>
         </div>
       </div>
+
       <div className="header-right">
-        {/* Currency Selector */}
-        <div className="currency-select-wrapper">
-          <i className="fa-solid fa-coins currency-icon"></i>
-          <select
-            id="currencySelect"
-            value={currency}
-            onChange={(e) => onCurrencyChange(e.target.value as CurrencySymbol)}
+        {/* DESKTOP HEADER ACTIONS */}
+        <div className="header-desktop-actions">
+          {/* Currency Selector */}
+          <div className="currency-select-wrapper">
+            <i className="fa-solid fa-coins currency-icon"></i>
+            <select
+              id="currencySelect"
+              value={currency}
+              onChange={(e) => onCurrencyChange(e.target.value as CurrencySymbol)}
+            >
+              <option value="Rs.">PKR (Rs.)</option>
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="AED">AED (AED)</option>
+              <option value="SR">SAR (SR)</option>
+              <option value="₹">INR (₹)</option>
+            </select>
+          </div>
+
+          {/* Quick Calculator Button */}
+          <button
+            className="icon-btn"
+            id="calcBtn"
+            onClick={onCalculatorClick}
+            title="Quick Calculator"
           >
-            <option value="Rs.">PKR (Rs.)</option>
-            <option value="$">USD ($)</option>
-            <option value="€">EUR (€)</option>
-            <option value="AED">AED (AED)</option>
-            <option value="SR">SAR (SR)</option>
-            <option value="₹">INR (₹)</option>
-          </select>
+            <i className="fa-solid fa-calculator"></i>
+          </button>
+
+          {/* App & Form Settings Button */}
+          <button
+            className="icon-btn"
+            id="settingsBtn"
+            onClick={onSettingsClick}
+            title="App & Form Settings"
+          >
+            <i className="fa-solid fa-sliders"></i>
+          </button>
+
+          {/* Lock PIN Button */}
+          <button
+            className="icon-btn"
+            id="pinToggle"
+            onClick={onPinClick}
+            title="PIN Lock Settings"
+          >
+            <i className="fa-solid fa-lock"></i>
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            className="icon-btn"
+            id="themeToggle"
+            onClick={onThemeToggle}
+            title="Toggle Theme"
+          >
+            <i className={theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon"}></i>
+          </button>
         </div>
-        {/* Lock PIN Button */}
-        <button
-          className="icon-btn"
-          id="pinToggle"
-          onClick={onPinClick}
-          title="PIN Lock Settings"
-        >
-          <i className="fa-solid fa-lock"></i>
-        </button>
-        {/* Theme Toggle */}
-        <button
-          className="icon-btn"
-          id="themeToggle"
-          onClick={onThemeToggle}
-          title="Toggle Theme"
-        >
-          <i className={theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon"}></i>
-        </button>
+
+        {/* MOBILE / RESPONSIVE EXTRA TOOLS DROPDOWN */}
+        <div className="header-mobile-tools">
+          <button
+            className="btn btn-primary extra-tools-btn"
+            onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+            title="Extra Tools Menu"
+          >
+            <i className="fa-solid fa-toolbox"></i> Tools{" "}
+            <i className={`fa-solid fa-chevron-${showToolsDropdown ? "up" : "down"}`}></i>
+          </button>
+
+          {showToolsDropdown && (
+            <div className="extra-tools-dropdown-menu">
+              <div className="dropdown-item-header">
+                <i className="fa-solid fa-wrench"></i> Extra Tools & Settings
+              </div>
+
+              {/* Currency Selector inside Mobile Menu */}
+              <div className="dropdown-tool-row">
+                <label><i className="fa-solid fa-coins"></i> Currency</label>
+                <select
+                  value={currency}
+                  onChange={(e) => {
+                    onCurrencyChange(e.target.value as CurrencySymbol);
+                    setShowToolsDropdown(false);
+                  }}
+                  className="mobile-currency-select"
+                >
+                  <option value="Rs.">PKR (Rs.)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="€">EUR (€)</option>
+                  <option value="AED">AED (AED)</option>
+                  <option value="SR">SAR (SR)</option>
+                  <option value="₹">INR (₹)</option>
+                </select>
+              </div>
+
+              {/* Quick Calculator inside Mobile Menu */}
+              <button
+                className="dropdown-tool-btn"
+                onClick={() => {
+                  onCalculatorClick();
+                  setShowToolsDropdown(false);
+                }}
+              >
+                <i className="fa-solid fa-calculator"></i> Quick Calculator
+              </button>
+
+              {/* App Settings inside Mobile Menu */}
+              <button
+                className="dropdown-tool-btn"
+                onClick={() => {
+                  onSettingsClick();
+                  setShowToolsDropdown(false);
+                }}
+              >
+                <i className="fa-solid fa-sliders"></i> Form & App Settings
+              </button>
+
+              {/* PIN Lock inside Mobile Menu */}
+              <button
+                className="dropdown-tool-btn"
+                onClick={() => {
+                  onPinClick();
+                  setShowToolsDropdown(false);
+                }}
+              >
+                <i className="fa-solid fa-lock"></i> PIN Lock Settings
+              </button>
+
+              {/* Theme Toggle inside Mobile Menu */}
+              <button
+                className="dropdown-tool-btn"
+                onClick={() => {
+                  onThemeToggle();
+                  setShowToolsDropdown(false);
+                }}
+              >
+                <i className={theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon"}></i>{" "}
+                Theme: {theme === "light" ? "Light" : "Dark"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

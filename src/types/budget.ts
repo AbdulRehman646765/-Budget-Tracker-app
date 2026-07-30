@@ -54,3 +54,20 @@ export interface BudgetAlertSettings {
 }
 
 export type CurrencySymbol = 'Rs.' | '$' | '€' | 'AED' | 'SR' | '₹';
+
+export interface CustomFormField {
+  id: string;
+  key: string;
+  label: string;
+  iconName: string;
+  defaultValue?: number;
+}
+
+export interface FieldVisibilityMap {
+  [key: string]: boolean;
+}
+
+export interface CustomFieldValuesMap {
+  [key: string]: number;
+}
+
