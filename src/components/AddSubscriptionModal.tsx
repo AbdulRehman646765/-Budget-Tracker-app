@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface AddSubscriptionModalProps {
   show: boolean;
@@ -15,6 +16,8 @@ export const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({
   onClose,
   onAdd,
 }) => {
+  useScrollLock(show);
+
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [dueDate, setDueDate] = useState("");

@@ -52,28 +52,35 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const updatePosition = useCallback(() => {
     if (!btnRef.current) return;
     const rect = btnRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
     const spaceBelow = viewportHeight - rect.bottom - 12;
     const spaceAbove = rect.top - 12;
+    const shouldFlipUpward = spaceBelow < 200 && spaceAbove > spaceBelow;
 
-    // Flip upward if space below is insufficient (<220px) and space above is larger
-    const shouldFlipUpward = spaceBelow < 220 && spaceAbove > spaceBelow;
+    // Calculate clamped width & left position to prevent screen overflow on mobile
+    const targetWidth = Math.min(Math.max(rect.width, 160), viewportWidth - 24);
+    let calculatedLeft = rect.left;
+    if (calculatedLeft + targetWidth > viewportWidth - 12) {
+      calculatedLeft = viewportWidth - targetWidth - 12;
+    }
+    calculatedLeft = Math.max(12, calculatedLeft);
 
     if (shouldFlipUpward) {
       setDropPos({
         bottom: viewportHeight - rect.top + 6,
-        left: rect.left,
-        width: Math.max(rect.width, 220),
-        maxHeight: Math.max(160, Math.min(spaceAbove, 300)),
+        left: calculatedLeft,
+        width: targetWidth,
+        maxHeight: Math.max(140, Math.min(spaceAbove, 280)),
         isUpward: true,
       });
     } else {
       setDropPos({
         top: rect.bottom + 6,
-        left: rect.left,
-        width: Math.max(rect.width, 220),
-        maxHeight: Math.max(160, Math.min(spaceBelow, 300)),
+        left: calculatedLeft,
+        width: targetWidth,
+        maxHeight: Math.max(140, Math.min(spaceBelow, 280)),
         isUpward: false,
       });
     }

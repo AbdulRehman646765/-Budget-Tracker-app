@@ -81,9 +81,27 @@ export interface DebtEntry {
   status: 'pending' | 'settled';
 }
 
+export type AppTheme = 'dark' | 'light' | 'cyberpunk' | 'emerald' | 'sunset' | 'midnight' | 'ocean';
+
+export type DashboardTemplate = 'classic' | 'compact' | 'analytics' | 'ledger';
+
+export interface UndoAction {
+  id: string;
+  type: 'customExpense' | 'subscription' | 'history' | 'debt' | 'category';
+  description: string;
+  item: any;
+  timestamp: number;
+}
+
+export interface ExchangeRates {
+  [key: string]: number;
+}
+
 export interface AppDataBackup {
   version: string;
   exportDate: string;
+  theme?: AppTheme;
+  dashboardTemplate?: DashboardTemplate;
   currency: CurrencySymbol;
   salary: number;
   grocery: number;
@@ -103,5 +121,6 @@ export interface AppDataBackup {
   fieldVisibility: FieldVisibilityMap;
   debts: DebtEntry[];
 }
+
 
 

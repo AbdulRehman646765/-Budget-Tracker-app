@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 export interface CalcHistoryItem {
   id: string;
@@ -17,6 +18,7 @@ export const QuickCalculatorModal: React.FC<QuickCalculatorModalProps> = ({
   show,
   onClose,
 }) => {
+  useScrollLock(show);
   const [display, setDisplay] = useState("0");
   const [prevValue, setPrevValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);

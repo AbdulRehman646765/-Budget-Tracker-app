@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { CategoryConfig, CategoryKey } from "@/types/budget";
 import { DEFAULT_CATEGORIES } from "@/lib/categories";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface AddExpenseModalProps {
   show: boolean;
@@ -21,6 +22,8 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
   onAdd,
   onOpenCategoryManager,
 }) => {
+  useScrollLock(show);
+
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<CategoryKey>("general");

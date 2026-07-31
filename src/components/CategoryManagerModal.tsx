@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CategoryConfig } from "@/types/budget";
 import { DEFAULT_CATEGORIES } from "@/lib/categories";
 import { CustomSelect, CustomSelectOption } from "@/components/CustomSelect";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface CategoryManagerModalProps {
   show: boolean;
@@ -256,6 +257,8 @@ export const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   onAddCategory,
   onDeleteCategory,
 }) => {
+  useScrollLock(show);
+
   const [label, setLabel] = useState("");
   const [color, setColor] = useState(PRESET_COLORS[0]);
   const [iconName, setIconName] = useState(PRESET_ICON_OPTIONS[0].value);
