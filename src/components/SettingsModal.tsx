@@ -236,41 +236,57 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Navigation — All settings and features shifted into tabs */}
-        <div className="settings-tabs" style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px", borderBottom: "1px solid var(--border-card)", paddingBottom: "10px" }}>
+        {/* Tab Navigation — 3-column grid for clean, balanced 3x2 alignment */}
+        <div
+          className="settings-tabs"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "8px",
+            marginBottom: "16px",
+            borderBottom: "1px solid var(--border-card)",
+            paddingBottom: "12px",
+          }}
+        >
           <button
             className={`settings-tab-btn ${activeTab === "visibility" ? "active" : ""}`}
             onClick={() => setActiveTab("visibility")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-eye"></i> Form Fields
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "custom_fields" ? "active" : ""}`}
             onClick={() => setActiveTab("custom_fields")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-plus-circle"></i> Custom Inputs
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "debts" ? "active" : ""}`}
             onClick={() => setActiveTab("debts")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-hand-holding-dollar"></i> Khata Tracker
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "templates" ? "active" : ""}`}
             onClick={() => setActiveTab("templates")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-table-cells"></i> Dashboard Layouts
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "themes" ? "active" : ""}`}
             onClick={() => setActiveTab("themes")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-palette"></i> Color Themes
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "backup" ? "active" : ""}`}
             onClick={() => setActiveTab("backup")}
+            style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
             <i className="fa-solid fa-database"></i> Backup & Restore
           </button>

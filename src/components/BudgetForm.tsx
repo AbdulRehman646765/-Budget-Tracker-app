@@ -203,14 +203,14 @@ export const BudgetForm: React.FC<BudgetFormProps> = ({
         </div>
       )}
 
-      <div className="btn-row">
-        <button className="btn btn-primary" onClick={onRefresh} id="refreshBtn">
+      <div className="btn-row" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: '16px' }}>
+        <button className="btn btn-primary btn-sm" onClick={onRefresh} id="refreshBtn" style={{ flex: 'none', width: 'auto' }}>
           <i className="fa-solid fa-rotate"></i> Refresh
         </button>
-        <button className="btn btn-success" onClick={onSave} id="saveBtn">
+        <button className="btn btn-success btn-sm" onClick={onSave} id="saveBtn" style={{ flex: 'none', width: 'auto' }}>
           <i className="fa-solid fa-floppy-disk"></i> Save
         </button>
-        <button className="btn btn-danger" onClick={onReset} id="resetBtn">
+        <button className="btn btn-danger btn-sm" onClick={onReset} id="resetBtn" style={{ flex: 'none', width: 'auto' }}>
           <i className="fa-solid fa-trash-can"></i> Reset
         </button>
       </div>

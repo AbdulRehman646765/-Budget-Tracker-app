@@ -92,9 +92,9 @@ export const CustomExpenses: React.FC<CustomExpensesProps> = ({
         })}
       </div>
       <button
-        className="btn btn-danger"
+        className="btn btn-danger btn-sm"
         onClick={onClearAll}
-        style={{ marginTop: "14px" }}
+        style={{ marginTop: "14px", flex: "none", width: "auto" }}
       >
         <i className="fa-solid fa-trash-can"></i> Clear All
       </button>
