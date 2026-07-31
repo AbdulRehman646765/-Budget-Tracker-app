@@ -274,7 +274,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={() => setActiveTab("templates")}
             style={{ justifyContent: "center", width: "100%", padding: "10px 12px" }}
           >
-            <i className="fa-solid fa-table-cells"></i> Dashboard Layouts
+            <i className="fa-solid fa-table-cells"></i> Dashboard Mode
           </button>
           <button
             className={`settings-tab-btn ${activeTab === "themes" ? "active" : ""}`}
