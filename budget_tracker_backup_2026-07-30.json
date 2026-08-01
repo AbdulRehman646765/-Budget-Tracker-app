@@ -1,0 +1,125 @@
+{
+  "version": "1.0",
+  "exportDate": "2026-07-30T09:36:47.382Z",
+  "currency": "Rs.",
+  "salary": 50000,
+  "grocery": 3000,
+  "vegetables": 1000,
+  "fruits": 2493,
+  "transport": 4200,
+  "mobile": 1200,
+  "goal": 5000,
+  "customExpenses": [
+    {
+      "id": "1785399919917",
+      "name": "Gym fees",
+      "amount": 3500,
+      "category": "fitness_1785399911750"
+    },
+    {
+      "id": "1785400376710",
+      "name": "Sandal Juice",
+      "amount": 1300,
+      "category": "drink_1785400355029"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "1",
+      "name": "Netflix",
+      "amount": 1500,
+      "dueDate": 5,
+      "status": "unpaid"
+    },
+    {
+      "id": "2",
+      "name": "Wifi / Internet",
+      "amount": 2000,
+      "dueDate": 10,
+      "status": "paid"
+    },
+    {
+      "id": "3",
+      "name": "Electricity Bill",
+      "amount": 4500,
+      "dueDate": 15,
+      "status": "unpaid"
+    }
+  ],
+  "history": [
+    {
+      "id": "1785400393093",
+      "date": "30/07/2026",
+      "salary": 50000,
+      "grocery": 3000,
+      "vegetables": 1000,
+      "fruits": 2493,
+      "transport": 4200,
+      "mobile": 1200,
+      "expense": 16693,
+      "remaining": 33307
+    }
+  ],
+  "monthlyHistory": [
+    {
+      "month": "Jul 2026",
+      "salary": 50000,
+      "expense": 16693
+    }
+  ],
+  "alertSettings": {
+    "enabled": true,
+    "threshold": 80
+  },
+  "userCustomCategories": [
+    {
+      "key": "fitness_1785399911750",
+      "label": "Fitness",
+      "color": "#22d3ee",
+      "iconName": "fa-solid fa-dumbbell",
+      "isCustom": true
+    },
+    {
+      "key": "drink_1785400355029",
+      "label": "Drink",
+      "color": "#84cc16",
+      "iconName": "fa-solid fa-glass-water-droplet",
+      "isCustom": true
+    }
+  ],
+  "customFormFields": [
+    {
+      "id": "1785401597534",
+      "key": "custom_field_1785401597534",
+      "label": "Gym fees",
+      "iconName": "fa-solid fa-dumbbell",
+      "defaultValue": 0
+    }
+  ],
+  "customFieldValues": {},
+  "fieldVisibility": {
+    "vegetables": true,
+    "grocery": true,
+    "custom_field_1785401597534": false
+  },
+  "debts": [
+    {
+      "id": "1785403729071",
+      "type": "receivable",
+      "personName": "Muhammad Khan",
+      "amount": 5500,
+      "date": "30/07/2026",
+      "notes": "Load",
+      "status": "pending"
+    },
+    {
+      "id": "1785403663664",
+      "type": "payable",
+      "personName": "Usman",
+      "amount": 10000,
+      "date": "30/07/2026",
+      "notes": "Load",
+      "status": "pending"
+    }
+  ]
+}
